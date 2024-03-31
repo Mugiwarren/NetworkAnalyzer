@@ -11,25 +11,31 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      margin: 0;
     }
     .container-fluid {
-      height: 100%;
+      height: calc(100% - 56px); /* 56px is the height of the header */
       display: flex;
       flex-direction: column;
       justify-content: center;
     }
-    .footer {
-      text-align: center;
-      background-color: #f8f9fa;
+    .header, .footer {
+      background-color: #F5A857;
+      color: white;
       padding: 10px 0;
+      text-align: center;
+    }
+    .footer {
+      margin-top: auto; /* Pushes the footer to the bottom */
     }
   </style>
 </head>
 <body>
+  <div class="header">
+    <h1>Network Analyzer</h1>
+  </div>
+
   <div class="container-fluid">
-    <div class="text-center mb-5">
-      <h1>Network Analyzer</h1>
-    </div>
     <div class="row justify-content-center">
       <div class="col-md-3 col-sm-6 mb-4">
         <div class="card text-center">
@@ -67,7 +73,7 @@
   </div>
 
   <footer class="footer">
-    <p>Reykjavik university</p>
+    <p>Reykjavik University - Spring 2024</p>
   </footer>
 
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
