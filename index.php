@@ -19,10 +19,7 @@
       flex-direction: column;
       justify-content: center;
     }
-    .header, .footer {
-      background-color: #F5A857;
-      color: white;
-      padding: 10px 0;
+    .footer {
       text-align: center;
     }
     .footer {
@@ -73,7 +70,7 @@
   </div>
 
   <footer class="footer">
-    <p>Reykjavik University - Spring 2024</p>
+    <p>Reykjavik university</p>
   </footer>
 
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
