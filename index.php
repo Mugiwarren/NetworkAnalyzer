@@ -11,25 +11,31 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      margin: 0;
     }
     .container-fluid {
-      height: 100%;
+      height: calc(100% - 56px); /* 56px is the height of the header */
       display: flex;
       flex-direction: column;
       justify-content: center;
     }
-    .footer {
-      text-align: center;
-      background-color: #f8f9fa;
+    .header, .footer {
+      background-color: orange;
+      color: white;
       padding: 10px 0;
+      text-align: center;
+    }
+    .footer {
+      margin-top: auto; /* Pushes the footer to the bottom */
     }
   </style>
 </head>
 <body>
+  <div class="header">
+    <h1>Network Analyzer</h1>
+  </div>
+
   <div class="container-fluid">
-    <div class="text-center mb-5">
-      <h1>Network Analyzer</h1>
-    </div>
     <div class="row justify-content-center">
       <div class="col-md-3 col-sm-6 mb-4">
         <div class="card text-center">
@@ -42,36 +48,4 @@
       <div class="col-md-3 col-sm-6 mb-4">
         <div class="card text-center">
           <div class="card-body">
-            <h5 class="card-title">Link 2</h5>
-            <p class="card-text">This is a link or graph</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3 col-sm-6 mb-4">
-        <div class="card text-center">
-          <div class="card-body">
-            <h5 class="card-title">Link 3</h5>
-            <p class="card-text">This is a link or graph</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3 col-sm-6 mb-4">
-        <div class="card text-center">
-          <div class="card-body">
-            <h5 class="card-title">Link 4</h5>
-            <p class="card-text">This is a link or graph</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <footer class="footer">
-    <p>Reykjavik university</p>
-  </footer>
-
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-</html>
+        
