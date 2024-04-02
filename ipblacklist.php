@@ -103,13 +103,29 @@
 
             file_put_contents($file, $new_line, FILE_APPEND);
         }
+
+        // Réinitialiser la recherche si le bouton de réinitialisation est cliqué
+        if (isset($_POST['reset_search'])) {
+            $search = '';
+            $filteredIps = $ips;
+        }
         // Fonction de recherche d'IP
         function searchIP($ips, $search) {
             if (empty($search)) {
                 return $ips;
             }
             return array_filter($ips, function($ip) use ($search) {
-                return strpos($ip, $search) !== false;
+                $line_parts = explode("#", $ip);
+                if (count($line_parts) >= 2) {
+                    $ip_address = trim($line_parts[0]);
+                    $host_part = trim($line_parts[1]);
+                    $host_parts = explode(",", $host_part);
+                    if (count($host_parts) >= 2) {
+                        $host = trim($host_parts[1]);
+                        return strpos($ip_address, $search) !== false || strpos($host, $search) !== false;
+                    }
+                }
+                return false;
             });
         }
         // Rechercher une IP si le formulaire de recherche est soumis
@@ -118,8 +134,9 @@
         ?>
         <!-- Barre de recherche -->
         <form action="" method="post">
-            <input type="text" name="search" placeholder="Search IP or URL" value="<?php echo htmlspecialchars($search); ?>">
-            <input type="submit" value="Search">
+            <input type="text" name="search" placeholder="Search IP or Host" value="<?php echo htmlspecialchars($search); ?>">
+            <input type="submit" name="search_submit" value="Search">
+            <input type="submit" name="reset_search" value="Reset">
         </form>
         <!-- Tableau pour afficher les adresses IP -->
     <table class="table table-striped">
