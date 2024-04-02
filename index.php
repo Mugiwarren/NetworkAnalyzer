@@ -64,8 +64,8 @@
       <div class="col-md-3 col-sm-6 mb-4">
         <div class="card text-center">
           <div class="card-body">
-            <h5 class="card-title">Link 4</h5>
-            <p class="card-text">This is a link or graph</p>
+            <h5 class="card-title">Blacklisted IPs</h5>
+            <a href="ipblacklist.php" class="card-text">Click Here</a>
           </div>
         </div>
       </div>
