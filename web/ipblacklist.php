@@ -123,12 +123,12 @@
                 exit;
             }
         }
-        $file = 'data/ips.txt';
+        $file = '../data/blacklistedips.txt';
         $ips = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         // Traiter la suppression d'IP
     if (isset($_POST['delete_ip'])) {
         $delete_ip = $_POST['delete_ip'];
-        $file = 'data/ips.txt';
+        $file = '../data/blacklistedips.txt';
         $lines = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         $new_lines = array();
 
@@ -146,7 +146,7 @@
     if (isset($_POST['add_ip'])) {
         $add_ip = $_POST['add_ip'];
         $add_host = $_POST['add_host'];
-        $file = 'data/ips.txt';
+        $file = '../data/blacklistedips.txt';
         $timestamp = date('Y-m-d H:i:s');
 
         // Vérifier si le fichier se termine par un saut de ligne
