@@ -125,7 +125,7 @@ def listen():                                                                   
                     packet[1] = target
                     packet[3] = str(src_port)
             if packet[0] != "UNDEFINED" and (packet[2] == "TCP" or packet[2] == "UDP"):
-                printPacket(packet)
+                #printPacket(packet)
                 #
                 # We're now handling the packets
                 #
