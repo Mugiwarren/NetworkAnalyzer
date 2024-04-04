@@ -91,25 +91,85 @@
                     position: "bottom",
                     suggestedMax: lastHourDataPoints,
                     ticks: {
-                    stepSize: 600, // 10 minutes en secondes (60 secondes * 10 minutes)
-                    callback: function (value, index, values) {
-                        if (value === 0 || value % 600 !== 0) {
-                        return "";
-                        }
+                        stepSize: 40, // 10 minutes en points (4 points par minute * 10 minutes)
+                        callback: function (value, index, values) {
+                            if (value === 0 || value % 40 !== 0) {
+                            return "";
+                            }
 
-                        const now = new Date();
-                        const oneHourAgo = new Date(now.getTime() - 3600000); // Il y a une heure
-                        const diffSeconds = oneHourAgo.getTime() / 1000 + value;
-                        const chartDate = new Date(diffSeconds * 1000);
+                            const now = new Date();
+                            const oneHourAgo = new Date(now.getTime() - 3600000); // Il y a une heure
+                            const diffMinutes = oneHourAgo.getTime() / 60000 + value / 4;
+                            const chartDate = new Date(diffMinutes * 60000);
 
-                        const minutes = chartDate.getMinutes();
-                        const hours = chartDate.getHours();
+                            const minutes = chartDate.getMinutes();
+                            const hours = chartDate.getHours();
 
-                        return `${hours}:${minutes.toString().padStart(2, "0")}`;
-                    },
+                            return `${hours}:${minutes.toString().padStart(2, "0")}`;
+                        },
                     },
                     grid: {
-                    display: false,
+                        display: false,
+                    },
+                },
+                y: {
+                suggestedMin: 0,
+                suggestedMax: 20000,
+                title: {
+                    display: true,
+                    text: "Throughput (Kbps)",
+                },
+                },
+            },
+            },
+        });
+        }
+        function createBandwidthChart3days(data, labels) {
+        const ctx = document.getElementById("bandwidthChart").getContext("2d");
+        const chart = new Chart(ctx, {
+            type: "line",
+            data: {
+            labels: labels,
+            datasets: [
+                {
+                label: "Bandwidth (last hour)",
+                data: data,
+                borderColor: "#F5A857",
+                fill: false,
+                },
+            ],
+            },
+            options: {
+            maintainAspectRatio: false,
+            title: {
+                display: true,
+                text: "Bandwidth (last hour)",
+            },
+            scales: {
+                x: {
+                    type: "linear",
+                    position: "bottom",
+                    suggestedMax: lastHourDataPoints,
+                    ticks: {
+                        stepSize: 40, // 10 minutes en points (4 points par minute * 10 minutes)
+                        callback: function (value, index, values) {
+                            if (value === 0 || value % 40 !== 0) {
+                            return "";
+                            }
+
+                            const now = new Date();
+                            const oneHourAgo = new Date(now.getTime() - 3600000); // Il y a une heure
+                            const diffMinutes = oneHourAgo.getTime() / 60000 + value / 4;
+                            const chartDate = new Date(diffMinutes * 60000);
+
+                            const minutes = chartDate.getMinutes();
+                            const hours = chartDate.getHours();
+
+                            return `${hours}:${minutes.toString().padStart(2, "0")}`;
+                        },
+                    },
+                    grid: {
+                        display: false,
                     },
                 },
                 y: {
