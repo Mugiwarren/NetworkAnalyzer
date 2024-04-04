@@ -67,7 +67,7 @@
             padding-bottom: 60px; /* La hauteur du footer */
             box-sizing: border-box;
         }
-    </style>
+        </style>
 </head>
 <body>
     <div class="header">
@@ -75,6 +75,20 @@
     </div>
     <div class="content-wrapper">
         <?php
+        function redirect($url) {
+            if (!headers_sent()) {
+                header('Location: ' . $url);
+                exit;
+            } else {
+                echo '<script type="text/javascript">';
+                echo 'window.location.href = "' . $url . '";';
+                echo '</script>';
+                echo '<noscript>';
+                echo '<meta http-equiv="refresh" content="0;url=' . $url . '" />';
+                echo '</noscript>';
+                exit;
+            }
+        }
         $file = 'data/ips.txt';
         $ips = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         // Traiter la suppression d'IP
@@ -92,17 +106,26 @@
         }
 
         file_put_contents($file, implode(PHP_EOL, $new_lines));
+        redirect($_SERVER['PHP_SELF']);
     }
         // Traiter l'ajout d'IP
-        if (isset($_POST['add_ip'])) {
-            $add_ip = $_POST['add_ip'];
-            $add_host = $_POST['add_host'];
-            $file = 'data/ips.txt';
-            $timestamp = date('Y-m-d H:i:s');
-            $new_line = "{$add_ip}    # {$timestamp}, {$add_host}\n";
+    if (isset($_POST['add_ip'])) {
+        $add_ip = $_POST['add_ip'];
+        $add_host = $_POST['add_host'];
+        $file = 'data/ips.txt';
+        $timestamp = date('Y-m-d H:i:s');
 
-            file_put_contents($file, $new_line, FILE_APPEND);
+        // Vérifier si le fichier se termine par un saut de ligne
+        $fileContent = file_get_contents($file);
+        if (substr(trim($fileContent), -1) !== PHP_EOL) {
+            $fileContent .= PHP_EOL;
+            file_put_contents($file, $fileContent);
         }
+
+        $new_line = "{$add_ip}    # {$timestamp}, {$add_host}\n" . PHP_EOL;
+        file_put_contents($file, $new_line, FILE_APPEND);
+        redirect($_SERVER['PHP_SELF']);
+    }
 
         // Réinitialiser la recherche si le bouton de réinitialisation est cliqué
         if (isset($_POST['reset_search'])) {
@@ -134,43 +157,40 @@
         ?>
         <!-- Barre de recherche -->
         <form action="" method="post">
-            <input type="text" name="search" placeholder="Search IP or Host" value="<?php echo htmlspecialchars($search); ?>">
-            <input type="submit" name="search_submit" value="Search">
-            <input type="submit" name="reset_search" value="Reset">
+            <input type="text" id="searchInput" name="search" placeholder="Search IP or Host" value="<?php echo htmlspecialchars($search); ?>">
+            <input type="button" id="searchButton" name="search_submit" value="Search">
+            <input type="reset" id="resetButton" value="Reset">
         </form>
         <!-- Tableau pour afficher les adresses IP -->
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>IP Address</th>
-                <th>Host</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
-            $file = 'data/ips.txt';
-            $ips = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-
-            foreach ($ips as $ip) {
-                $line_parts = explode("#", $ip);
-                if (count($line_parts) >= 2) {
-                    $ip_address = trim($line_parts[0]);
-                    $host_part = trim($line_parts[1]);
-                    $host_parts = explode(",", $host_part);
-                    if (count($host_parts) >= 2) {
-                        $host = trim($host_parts[1]);
-                        ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($ip_address); ?></td>
-                            <td><?php echo htmlspecialchars($host); ?></td>
-                        </tr>
-                        <?php
+        <table id="ipTable" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>IP Address</th>
+                    <th>Host</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                foreach ($filteredIps as $ip) {
+                    $line_parts = explode("#", $ip);
+                    if (count($line_parts) >= 2) {
+                        $ip_address = trim($line_parts[0]);
+                        $host_part = trim($line_parts[1]);
+                        $host_parts = explode(",", $host_part);
+                        if (count($host_parts) >= 2) {
+                            $host = trim($host_parts[1]);
+                            ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($ip_address); ?></td>
+                                <td><?php echo htmlspecialchars($host); ?></td>
+                            </tr>
+                            <?php
+                        }
                     }
                 }
-            }
-            ?>
-        </tbody>
-    </table>
+                ?>
+            </tbody>
+        </table>
         <!-- Formulaire pour supprimer une IP -->
         <form action="" method="post">
             <input type="text" name="delete_ip" placeholder="Delete IP">
@@ -186,5 +206,28 @@
     <footer class="footer">
         <p>Reykjavik University - Spring 2024</p>
     </footer>
+    <script>
+    document.getElementById('searchInput').addEventListener('input', searchIP);
+    document.getElementById('searchButton').addEventListener('click', searchIP);
+
+    function searchIP() {
+        const searchTerm = document.getElementById('searchInput').value.trim();
+        const tableRows = document.querySelectorAll('#ipTable tbody tr');
+
+        for (const row of tableRows) {
+            const ipAddress = row.cells[0].textContent.trim();
+            const hostName = row.cells[1].textContent.trim();
+
+            if (ipAddress.includes(searchTerm) || hostName.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        }
+    }
+    document.getElementById("resetButton").addEventListener("click", function() {
+    location.reload();
+    });
+    </script>
 </body>
 </html>
