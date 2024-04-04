@@ -30,7 +30,7 @@ def calcData():
         rx_speed = round((rx2 - rx1)/1000.0, 4)
         values.append(rx_speed)
         rx1 = rx2
-    return statistics.median(values)
+    return statistics.mean(values)
 
 def saveData():
     values = readPreviousBandwith()
