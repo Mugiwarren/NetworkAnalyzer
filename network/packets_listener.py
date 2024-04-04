@@ -2,7 +2,6 @@ import socket      #This library is used to listen for packages
 import struct      #This library is used to help with handling binary data
 import textwrap    #This library is used to format data packages and put limited data on one line
 from getmac import get_mac_address as gma
-from packet_handler import *
 
 #Unpack ethernet frame, whenever a packet is detected it's passed in to this function to be unpacked
 def ethernet_frame(data):                                            # The reason why we only unpack the first 14 bytes is bc it gives dest, source and type of the Ethernet frame
@@ -127,3 +126,26 @@ def listen():                                                                   
             if packet[0] != "UNDEFINED":
                 printPacket(packet)
                 handle(packet)
+
+def read_open_ports_from_file():
+    open_ports = []
+    try:
+        with open('data/ports.txt', 'r') as file:
+            for line in file:
+                port = int(line.strip())  # Convert each line to an integer
+                open_ports.append(port)
+    except FileNotFoundError:
+        print("File not found.")
+    return open_ports
+
+def handle(packet):
+    if packet[0] == "RECEIVED":
+        ports = read_open_ports_from_file()
+        port = packet[3]
+        if port in ports:
+            # TODO ajouter aux stats ici
+            # voir si l'on est dans le cas d'une attaque ou non
+            return
+    elif packet[0] == "SENT":
+        target = packet[1]
+

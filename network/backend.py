@@ -1,13 +1,16 @@
 from packets_listener import *
 from port_checker import *
+from bandwith import *
 import threading
+import asyncio
+
 
 def main():
-    #packet_listener_thread = threading.Thread(target=listen)
-    #packet_listener_thread.start()
-    port_thread = threading.Thread(target=start)
-    port_thread.start()
-    return 1
 
+    print("Starting main")
+    threading.Thread(target=refreshPorts).start()
+    threading.Thread(target=listen).start()
+    threading.Thread(target=saveBandwith).start()
+    return 1
 
 main()

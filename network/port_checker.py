@@ -25,7 +25,7 @@ def scan_ports():
     return open_ports
 
 
-def start():
+def refreshPorts():
 
     while True:
         saveOpenPorts()
