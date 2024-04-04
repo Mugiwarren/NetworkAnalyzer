@@ -93,11 +93,19 @@
         input[type="reset"]:hover {
             background-color: #e53935;
         }
+        .header a {
+        color: #ffffff;
+        text-decoration: none;
+        }
+
+        .header a:hover {
+            text-decoration: underline;
+        }
         </style>
 </head>
 <body>
     <div class="header">
-        <h1>Network Analyzer</h1>
+        <a href="index.php"><h1>Network Analyzer</a>
     </div>
     <div class="content-wrapper">
         <?php
@@ -184,7 +192,6 @@
         <!-- Barre de recherche -->
         <form action="" method="post">
             <input type="text" id="searchInput" name="search" placeholder="Search IP or Host" value="<?php echo htmlspecialchars($search); ?>">
-            <input type="reset" id="resetButton" value="Reset">
         </form>
         <!-- Tableau pour afficher les adresses IP -->
         <table id="ipTable" class="table table-striped">
@@ -250,9 +257,6 @@
             }
         }
     }
-    document.getElementById("resetButton").addEventListener("click", function() {
-    location.reload();
-    });
     </script>
 </body>
 </html>
