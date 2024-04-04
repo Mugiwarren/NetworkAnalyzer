@@ -67,6 +67,32 @@
             padding-bottom: 60px; /* La hauteur du footer */
             box-sizing: border-box;
         }
+        input[type="submit"], input[type="reset"] {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 5px 24px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition-duration: 0.4s;
+        }
+
+        input[type="submit"]:hover, input[type="reset"]:hover {
+            background-color: #3e8e41;
+        }
+
+        input[type="reset"] {
+            background-color: #f44336;
+        }
+
+        input[type="reset"]:hover {
+            background-color: #e53935;
+        }
         </style>
 </head>
 <body>
@@ -158,7 +184,6 @@
         <!-- Barre de recherche -->
         <form action="" method="post">
             <input type="text" id="searchInput" name="search" placeholder="Search IP or Host" value="<?php echo htmlspecialchars($search); ?>">
-            <input type="button" id="searchButton" name="search_submit" value="Search">
             <input type="reset" id="resetButton" value="Reset">
         </form>
         <!-- Tableau pour afficher les adresses IP -->
