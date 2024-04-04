@@ -2,6 +2,7 @@ import socket      #This library is used to listen for packages
 import struct      #This library is used to help with handling binary data
 import textwrap    #This library is used to format data packages and put limited data on one line
 from getmac import get_mac_address as gma
+from datetime import datetime
 
 #Unpack ethernet frame, whenever a packet is detected it's passed in to this function to be unpacked
 def ethernet_frame(data):                                            # The reason why we only unpack the first 14 bytes is bc it gives dest, source and type of the Ethernet frame
@@ -123,9 +124,30 @@ def listen():                                                                   
                 elif packet[0] == "SENT":
                     packet[1] = target
                     packet[3] = str(src_port)
-            if packet[0] != "UNDEFINED":
+            if packet[0] != "UNDEFINED" and (packet[2] == "TCP" or packet[2] == "UDP"):
                 printPacket(packet)
-                handle(packet)
+                #
+                # We're now handling the packets
+                #
+                ips_blacklist = read_blocklisted_ip()
+                bl_result = check_if_ip_is_blacklisted(packet[1], ips_blacklist)
+                if bl_result != None:
+                    conn.recv(65536)
+                    print("\n\n\n PACKET DESTROYED: " + str(bl_result) + "\n\n\n")
+
+                    create_log_file("SEVERE", bl_result[0], "Tried to connect to a forbidden IP (" + str(bl_result[0]) + " - " + str(bl_result[1]).replace("\n", "") + ")")
+
+                    continue
+
+                if packet[0] == "RECEIVED":
+                    ports = read_open_ports_from_file()
+                    port = packet[3]
+                    if port in ports:
+                        # TODO ajouter aux stats ici
+                        # voir si l'on est dans le cas d'une attaque ou non
+                        return
+                elif packet[0] == "SENT":
+                    target = packet[1]
 
 def read_open_ports_from_file():
     open_ports = []
@@ -138,14 +160,31 @@ def read_open_ports_from_file():
         print("File not found.")
     return open_ports
 
-def handle(packet):
-    if packet[0] == "RECEIVED":
-        ports = read_open_ports_from_file()
-        port = packet[3]
-        if port in ports:
-            # TODO ajouter aux stats ici
-            # voir si l'on est dans le cas d'une attaque ou non
-            return
-    elif packet[0] == "SENT":
-        target = packet[1]
+def create_log_file(type, destination, message):
+    now = datetime.now()
 
+    file_name = "data/logs/" + now.strftime("%Y-%m-%d-%H-%M-%S-%f.json")
+    with open(file_name, 'w') as file:
+        file.write("{\"type\": \"" + str(type) + "\", \"destination\": \"" + str(destination) + "\", \"message\": \"" + str(message) + "\"}")
+
+def read_blocklisted_ip():
+    ips = []
+    try:
+        with open('data/blacklistedips.txt', 'r') as file:
+            for l in file:
+                content = l.split("#")
+                if len(content) == 2:
+                    value = []
+                    ip_ = content[0].replace(' ', '')
+                    value.append(ip_)
+                    value.append(content[1])
+                    ips.append(value)
+    except FileNotFoundError:
+        print("File not found.")
+    return ips
+
+def check_if_ip_is_blacklisted(ip, blacklist):
+    for addr in blacklist:
+        if str(addr[0]) == str(ip):
+            return addr
+    return None
