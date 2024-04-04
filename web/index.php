@@ -40,8 +40,8 @@
       <div class="col-md-3 col-sm-6 mb-4">
         <div class="card text-center">
           <div class="card-body">
-            <h5 class="card-title">Link 1</h5>
-            <p class="card-text">This is a link or graph</p>
+            <h5 class="card-title">Bandwidth</h5>
+            <a href="bandwidthgraph.php" class="card-text">Click Here</a>
           </div>
         </div>
       </div>
