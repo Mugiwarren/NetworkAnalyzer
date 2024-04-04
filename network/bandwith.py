@@ -1,3 +1,4 @@
+import statistics
 from time import *
 
 def get_bytes(t, iface='wlp0s20f3'):
@@ -29,13 +30,12 @@ def calcData():
         rx_speed = round((rx2 - rx1)/1000.0, 4)
         values.append(rx_speed)
         rx1 = rx2
-    return values
+    return statistics.median(values)
 
 def saveData():
     values = readPreviousBandwith()
     data = calcData()
-    for value in data:
-        values.append(value)
+    values.append(data)
     start = len(values) - 3*24*60*60 - 1
     if start < 0:
         start = 0
