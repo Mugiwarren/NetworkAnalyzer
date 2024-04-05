@@ -29,12 +29,20 @@
         .footer {
         margin-top: auto; /* Pushes the footer to the bottom */
         }
+        .header a {
+        color: #ffffff;
+        text-decoration: none;
+        }
+
+        .header a:hover {
+            text-decoration: underline;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </head>
     <body>
     <div class="header">
-        <h1>Network Analyzer</h1>
+        <a href="index.php"><h1>Network Analyzer</a>
     </div>
     <div class="container-fluid">
         <canvas id="bandwidthChart"></canvas>
