@@ -125,7 +125,6 @@ def listen():                                                                   
                     packet[1] = target
                     packet[3] = str(src_port)
             if packet[0] != "UNDEFINED" and (packet[2] == "TCP" or packet[2] == "UDP"):
-                #printPacket(packet)
                 #
                 # We're now handling the packets
                 #
@@ -140,12 +139,15 @@ def listen():                                                                   
                     continue
 
                 if packet[0] == "RECEIVED":
+                    printPacket(packet)
                     ports = read_open_ports_from_file()
                     port = packet[3]
-                    if port in ports:
-                        # TODO ajouter aux stats ici
-                        # voir si l'on est dans le cas d'une attaque ou non
-                        return
+                    inPorts = False
+                    for p in ports:
+                        if str(p) == str(port):
+                            inPorts = True
+                    if inPorts:
+                        write_cache(port, len(packet[4]))
                 elif packet[0] == "SENT":
                     target = packet[1]
 
@@ -166,6 +168,12 @@ def create_log_file(type, destination, message):
     file_name = "data/logs/" + now.strftime("%Y-%m-%d-%H-%M-%S-%f.json")
     with open(file_name, 'w') as file:
         file.write("{\"type\": \"" + str(type) + "\", \"destination\": \"" + str(destination) + "\", \"message\": \"" + str(message) + "\"}")
+
+def write_cache(port, packetSize):
+    file_name = "data/cache/request.csv"
+    with open(file_name, 'a') as file:
+        file.write(str(port) + ";" + str(packetSize) + "\n")
+    return 
 
 def read_blocklisted_ip():
     ips = []
