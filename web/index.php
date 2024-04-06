@@ -49,16 +49,16 @@
       <div class="col-md-3 col-sm-6 mb-4">
         <div class="card text-center">
           <div class="card-body">
-            <h5 class="card-title">Link 2</h5>
-            <p class="card-text">This is a link or graph</p>
+            <h5 class="card-title">Applications Requests</h5>
+            <a href="applicationsRequest.php" class="card-text">Click Here</a><br>
           </div>
         </div>
       </div>
       <div class="col-md-3 col-sm-6 mb-4">
         <div class="card text-center">
           <div class="card-body">
-            <h5 class="card-title">Link 3</h5>
-            <p class="card-text">This is a link or graph</p>
+            <h5 class="card-title">Warnings</h5>
+            <a href="warnings.php" class="card-text">Click Here</a><br>
           </div>
         </div>
       </div>
