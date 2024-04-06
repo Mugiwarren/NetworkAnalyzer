@@ -41,7 +41,8 @@
         <div class="card text-center">
           <div class="card-body">
             <h5 class="card-title">Bandwidth</h5>
-            <a href="bandwidthgraph.php" class="card-text">Click Here</a>
+            <a href="bandwidthgraph.php" class="card-text">Last hour</a><br>
+            <a href="bandwidth3days.php" class="card-text">Last 3 days</a>
           </div>
         </div>
       </div>

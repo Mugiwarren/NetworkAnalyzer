@@ -53,14 +53,14 @@
         const lastHourDataPoints = 240;
 
         const xhr = new XMLHttpRequest();
-        xhr.open("GET", "../data/bandwidth.txt", true);
+        xhr.open("GET", "bandwidth.txt", true);
         xhr.onload = function () {
         if (this.status === 200) {
             const lines = this.responseText.trim().split("\n");
             const startIndex = Math.max(lines.length - lastHourDataPoints, 0);
-
-            for (let i = startIndex; i < lines.length; i++) {
-            const value = parseFloat(lines[i]);
+            
+            for (let i = 0; i < lastHourDataPoints; i++) {
+            const value = parseFloat(lines[lines.length - i]);
             throughputData.push(value);
             labels.push(lastHourDataPoints - (i - startIndex));
             }
@@ -71,7 +71,7 @@
         }
         };
         xhr.send();
-
+        
         function createBandwidthChart(data, labels) {
         const ctx = document.getElementById("bandwidthChart").getContext("2d");
         const chart = new Chart(ctx, {
@@ -122,67 +122,7 @@
                 },
                 y: {
                 suggestedMin: 0,
-                suggestedMax: 20000,
-                title: {
-                    display: true,
-                    text: "Throughput (Kbps)",
-                },
-                },
-            },
-            },
-        });
-        }
-        function createBandwidthChart3days(data, labels) {
-        const ctx = document.getElementById("bandwidthChart").getContext("2d");
-        const chart = new Chart(ctx, {
-            type: "line",
-            data: {
-            labels: labels,
-            datasets: [
-                {
-                label: "Bandwidth (last hour)",
-                data: data,
-                borderColor: "#F5A857",
-                fill: false,
-                },
-            ],
-            },
-            options: {
-            maintainAspectRatio: false,
-            title: {
-                display: true,
-                text: "Bandwidth (last hour)",
-            },
-            scales: {
-                x: {
-                    type: "linear",
-                    position: "bottom",
-                    suggestedMax: lastHourDataPoints,
-                    ticks: {
-                        stepSize: 40, // 10 minutes en points (4 points par minute * 10 minutes)
-                        callback: function (value, index, values) {
-                            if (value === 0 || value % 40 !== 0) {
-                            return "";
-                            }
-
-                            const now = new Date();
-                            const oneHourAgo = new Date(now.getTime() - 3600000); // Il y a une heure
-                            const diffMinutes = oneHourAgo.getTime() / 60000 + value / 4;
-                            const chartDate = new Date(diffMinutes * 60000);
-
-                            const minutes = chartDate.getMinutes();
-                            const hours = chartDate.getHours();
-
-                            return `${hours}:${minutes.toString().padStart(2, "0")}`;
-                        },
-                    },
-                    grid: {
-                        display: false,
-                    },
-                },
-                y: {
-                suggestedMin: 0,
-                suggestedMax: 20000,
+                suggestedMax: 10000,
                 title: {
                     display: true,
                     text: "Throughput (Kbps)",
