@@ -1,2 +1,3 @@
-/data
 .idea/
+.vscode/
+network/__pycache__/

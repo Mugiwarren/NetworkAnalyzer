@@ -75,6 +75,11 @@ def printPacket(packet):
 # - Which port is targeted by the request
 def listen():                                                                       #AF_PACKET is for protocol level packet manipulation
     conn = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.ntohs(3))        #.hton is used to convert bytes in a readable format
+    
+    file_name = "data/cache/request.csv"
+    with open(file_name, 'w') as file:          # iniating cache file
+        file.write("")
+    
     while True:                                                                     #SOCK_RAW allows access to the underlying transport provider.
         raw_data, _ = conn.recvfrom(65536)                                          #we give it biggest buffer size of 65536
         target_mac, src_mac, eth_proto, data = ethernet_frame(raw_data)
@@ -132,14 +137,12 @@ def listen():                                                                   
                 bl_result = check_if_ip_is_blacklisted(packet[1], ips_blacklist)
                 if bl_result != None:
                     conn.recv(65536)
-                    print("\n\n\n PACKET DESTROYED: " + str(bl_result) + "\n\n\n")
 
                     create_log_file("SEVERE", bl_result[0], "Tried to connect to a forbidden IP (" + str(bl_result[0]) + " - " + str(bl_result[1]).replace("\n", "") + ")")
 
                     continue
 
                 if packet[0] == "RECEIVED":
-                    printPacket(packet)
                     ports = read_open_ports_from_file()
                     port = packet[3]
                     inPorts = False
