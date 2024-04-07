@@ -76,7 +76,7 @@ def printPacket(packet):
 def listen():                                                                       #AF_PACKET is for protocol level packet manipulation
     conn = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.ntohs(3))        #.hton is used to convert bytes in a readable format
     
-    file_name = "data/cache/request.csv"
+    file_name = "web/data/cache/request.csv"
     with open(file_name, 'w') as file:          # iniating cache file
         file.write("")
     
@@ -88,7 +88,7 @@ def listen():                                                                   
         if eth_proto == 8:
             (_, _, _, proto, src, target, data) = ipv4_packet(data)
 
-            packet = ["UNDEFINED", "USER_IP", "PROTOCOL", "PORT", "DATA"]
+            packet = ["UNDEFINED", "USER_IP", "PROTOCOL", "PORT", "web/data"]
             # 0- RECEIVED/SENT
             # 1- IP ADDRESS
             # 2- TCP/UDP/OTHER
@@ -157,7 +157,7 @@ def listen():                                                                   
 def read_open_ports_from_file():
     open_ports = []
     try:
-        with open('data/ports.txt', 'r') as file:
+        with open('web/data/ports.txt', 'r') as file:
             for line in file:
                 port = int(line.strip())  # Convert each line to an integer
                 open_ports.append(port)
@@ -168,12 +168,12 @@ def read_open_ports_from_file():
 def create_log_file(type, destination, message):
     now = datetime.now()
 
-    file_name = "data/logs/" + now.strftime("%Y-%m-%d-%H-%M-%S-%f.json")
+    file_name = "web/data/logs/" + now.strftime("%Y-%m-%d-%H-%M-%S-%f.json")
     with open(file_name, 'w') as file:
         file.write("{\"type\": \"" + str(type) + "\", \"destination\": \"" + str(destination) + "\", \"message\": \"" + str(message) + "\"}")
 
 def write_cache(port, packetSize):
-    file_name = "data/cache/request.csv"
+    file_name = "web/data/cache/request.csv"
     with open(file_name, 'a') as file:
         file.write(str(port) + ";" + str(packetSize) + "\n")
     return 
@@ -181,7 +181,7 @@ def write_cache(port, packetSize):
 def read_blocklisted_ip():
     ips = []
     try:
-        with open('data/blacklistedips.txt', 'r') as file:
+        with open('web/data/blacklistedips.txt', 'r') as file:
             for l in file:
                 content = l.split("#")
                 if len(content) == 2:
