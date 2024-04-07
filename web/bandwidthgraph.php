@@ -117,6 +117,7 @@
                             const hours = chartDate.getHours();
 
                             return `${hours}:${minutes.toString().padStart(2, "0")}`;
+                                
                         },
                     },
                     grid: {

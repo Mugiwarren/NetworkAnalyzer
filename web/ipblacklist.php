@@ -10,27 +10,12 @@
          body {
             display: flex;
             flex-direction: column;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
-            padding: 0;
             font-family: Arial, sans-serif;
+            background-color: #f8f9fa; /* Ajout d'une couleur de fond */
         }
-        .header, .footer {
-            background-color: #F5A857;
-            color: white;
-            padding: 10px 0;
-            text-align: center;
-            width: 100%;
-            position: fixed;
-            left: 0;
-            z-index: 1000;
-        }
-        .header {
-            top: 0;
-        }
-        .footer {
-            bottom: 0;
-        }
+
         .content-wrapper {
             flex: 1;
             display: flex;
@@ -40,67 +25,68 @@
             padding: 20px;
             box-sizing: border-box;
         }
+
         form {
             width: 100%;
-            max-width: 600px;
-            margin: 10px 0;
+            max-width: 400px; /* Réduit la largeur du formulaire */
+            margin-bottom: 20px; /* Ajout d'un espace en bas */
         }
-        input[type="text"], input[type="submit"] {
+
+        input[type="text"], input[type="submit"], input[type="reset"] {
             width: 100%;
-            max-width: 250px;
-            margin-right: 10px;
+            padding: 10px; /* Ajuste le rembourrage pour une meilleure expérience utilisateur */
+            margin-bottom: 10px; /* Ajout d'un espace entre les éléments du formulaire */
+            border: 1px solid #ced4da; /* Ajout d'une bordure */
+            border-radius: 4px; /* Ajout d'un peu de bordure */
         }
-        table {
+
+        input[type="submit"], input[type="reset"] {
+            background-color: #007bff; /* Change la couleur de fond des boutons */
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s; /* Ajoute une transition fluide */
+        }
+
+        input[type="submit"]:hover, input[type="reset"]:hover {
+            background-color: #0056b3; /* Change la couleur de fond au survol */
+        }
+
+        .table {
             width: 100%;
             max-width: 600px;
             margin-bottom: 20px;
             overflow-y: auto;
-            height: 300px;
-            display: block;
+            border-collapse: collapse; /* Fusionne les bordures de la table */
         }
+
         th, td {
+            padding: 8px; /* Ajuste le rembourrage des cellules */
+            border: 1px solid #ddd; /* Ajoute des bordures aux cellules */
             text-align: center;
         }
-        /* Ajoutez cette section pour ajouter un padding au contenu de la page pour éviter qu'il ne soit caché derrière le header et le footer */
-        .content-wrapper {
-            padding-top: 60px; /* La hauteur du header */
-            padding-bottom: 60px; /* La hauteur du footer */
-            box-sizing: border-box;
-        }
-        input[type="submit"], input[type="reset"] {
-            background-color: #4CAF50;
-            border: none;
+
+        .header, .footer {
+            background-color: #F5A857;
             color: white;
-            padding: 5px 24px;
+            padding: 10px 0;
             text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 4px 2px;
-            cursor: pointer;
-            border-radius: 4px;
-            transition-duration: 0.4s;
+            width: 100%;
         }
 
-        input[type="submit"]:hover, input[type="reset"]:hover {
-            background-color: #3e8e41;
-        }
-
-        input[type="reset"] {
-            background-color: #f44336;
-        }
-
-        input[type="reset"]:hover {
-            background-color: #e53935;
-        }
         .header a {
-        color: #ffffff;
-        text-decoration: none;
+            color: white;
+            text-decoration: none;
         }
 
         .header a:hover {
             text-decoration: underline;
         }
+
+        .footer {
+            margin-top: auto; /* Pousse le pied de page en bas */
+        }
+
         </style>
 </head>
 <body>
@@ -128,7 +114,7 @@
         // Traiter la suppression d'IP
     if (isset($_POST['delete_ip'])) {
         $delete_ip = $_POST['delete_ip'];
-        $file = '../data/blacklistedips.txt';
+        $file = 'data/blacklistedips.txt';
         $lines = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         $new_lines = array();
 
@@ -146,7 +132,7 @@
     if (isset($_POST['add_ip'])) {
         $add_ip = $_POST['add_ip'];
         $add_host = $_POST['add_host'];
-        $file = '../data/blacklistedips.txt';
+        $file = 'data/blacklistedips.txt';
         $timestamp = date('Y-m-d H:i:s');
 
         // Vérifier si le fichier se termine par un saut de ligne
@@ -224,15 +210,27 @@
             </tbody>
         </table>
         <!-- Formulaire pour supprimer une IP -->
-        <form action="" method="post">
-            <input type="text" name="delete_ip" placeholder="Delete IP">
-            <input type="submit" value="Delete">
+        <form action="" method="post" class="form-inline mb-3">
+            <div class="input-group mr-sm-2">
+                <input type="text" name="delete_ip" class="form-control" placeholder="Delete IP">
+            </div>
+            <button type="submit" class="btn btn-danger">Delete</button>
         </form>
+
         <!-- Formulaire pour ajouter une IP -->
-        <form action="" method="post">
-            <input type="text" name="add_ip" placeholder="Add IP"><br>
-            <input type="text" name="add_host" placeholder="Add host name">
-            <input type="submit" value="Add">
+        <form action="" method="post" class="mb-3">
+            <div class="form-row align-items-center">
+                <div class="col-auto">
+                    <input type="text" name="add_ip" class="form-control mb-2" placeholder="Add IP">
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary mb-2">Add</button>
+                </div>
+                <div class="col-auto">
+                    <input type="text" name="add_host" class="form-control mb-2" placeholder="Add host name">
+                </div>
+                
+            </div>
         </form>
     </div>
     <footer class="footer">

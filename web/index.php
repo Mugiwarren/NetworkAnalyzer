@@ -50,7 +50,7 @@
         <div class="card text-center">
           <div class="card-body">
             <h5 class="card-title">Applications Requests</h5>
-            <a href="applicationsRequest.php" class="card-text">Click Here</a><br>
+            <a href="applicationsRequest.php" class="card-text">Click Here</a><br><br>
           </div>
         </div>
       </div>
@@ -58,7 +58,7 @@
         <div class="card text-center">
           <div class="card-body">
             <h5 class="card-title">Warnings</h5>
-            <a href="warnings.php" class="card-text">Click Here</a><br>
+            <a href="warnings.php" class="card-text">Click Here</a><br><br>
           </div>
         </div>
       </div>
@@ -66,7 +66,7 @@
         <div class="card text-center">
           <div class="card-body">
             <h5 class="card-title">Blacklisted IPs</h5>
-            <a href="ipblacklist.php" class="card-text">Click Here</a>
+            <a href="ipblacklist.php" class="card-text">Click Here</a><br><br>
           </div>
         </div>
       </div>

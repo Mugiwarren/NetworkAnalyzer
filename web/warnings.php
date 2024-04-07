@@ -89,7 +89,11 @@
                           // Extraire les informations du contenu JSON
                           $message = $json->message;
                           $type = $json->type;
-                          $destination = $json->destination;
+                          if(isset($json->destination)){
+                            $destination = $json->destination;
+                          } else {
+                            $destination = "";
+                          }
 
                           // Stocker les détails du fichier dans le tableau
                           $fileDetails[] = array(
