@@ -10,23 +10,46 @@
       height: 100vh;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
       margin: 0;
     }
     .container-fluid {
-      height: calc(100% - 56px); /* 56px is the height of the header */
+      flex: 1;
       display: flex;
-      flex-direction: column;
+      align-items: center;
       justify-content: center;
     }
     .header, .footer {
       background-color: #F5A857;
       color: white;
-      padding: 10px 0;
+      padding: 20px 0;
       text-align: center;
     }
     .footer {
       margin-top: auto; /* Pushes the footer to the bottom */
+    }
+    .card {
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    .card-title {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+    }
+    .btn-primary {
+      width: 100%;
+      background-color: #6c757d; /* Gris sobre */
+      color: white; /* Texte blanc */
+      border: none;
+      font-weight: bold; /* Texte en gras */
+    }
+    .btn-primary:hover {
+      background-color: #5a6268; /* Gris légèrement plus foncé au survol */
     }
   </style>
 </head>
@@ -37,36 +60,47 @@
 
   <div class="container-fluid">
     <div class="row justify-content-center">
-      <div class="col-md-3 col-sm-6 mb-4">
+      <div class="col-md-6 col-sm-6 mb-4">
         <div class="card text-center">
           <div class="card-body">
             <h5 class="card-title">Bandwidth</h5>
-            <a href="bandwidthgraph.php" class="card-text">Last hour</a><br>
-            <a href="bandwidth3days.php" class="card-text">Last 3 days</a>
+            <form action="bandwidthgraph.php" method="get">
+                <button type="submit" class="btn btn-primary">Last hour</button>
+            </form>
+            <form action="bandwidth3days.php" method="get">
+                <button type="submit" class="btn btn-primary mt-3">Last 3 days</button>
+            </form>
           </div>
         </div>
       </div>
-      <div class="col-md-3 col-sm-6 mb-4">
+      <div class="col-md-6 col-sm-6 mb-4">
         <div class="card text-center">
           <div class="card-body">
             <h5 class="card-title">Applications Requests</h5>
-            <a href="applicationsRequest.php" class="card-text">Click Here</a><br><br>
+            <br>
+            <form action="applicationsRequest.php" method="get">
+                <button type="submit" class="btn btn-primary">View Requests</button><br><br>
+            </form>
           </div>
         </div>
       </div>
-      <div class="col-md-3 col-sm-6 mb-4">
+      <div class="col-md-6 col-sm-6 mb-4">
         <div class="card text-center">
           <div class="card-body">
             <h5 class="card-title">Warnings</h5>
-            <a href="warnings.php" class="card-text">Click Here</a><br><br>
+            <form action="warnings.php" method="get">
+                <button type="submit" class="btn btn-primary">View Warnings</button>
+            </form>
           </div>
         </div>
       </div>
-      <div class="col-md-3 col-sm-6 mb-4">
+      <div class="col-md-6 col-sm-6 mb-4">
         <div class="card text-center">
           <div class="card-body">
             <h5 class="card-title">Blacklisted IPs</h5>
-            <a href="ipblacklist.php" class="card-text">Click Here</a><br><br>
+            <form action="ipblacklist.php" method="get">
+                <button type="submit" class="btn btn-primary">View Blacklisted IPs</button>
+            </form>
           </div>
         </div>
       </div>
@@ -74,7 +108,7 @@
   </div>
 
   <footer class="footer">
-    <p>Reykjavik University - Spring 2024</p>
+    <p><b>Reykjavik University - Spring 2024</b></p>
   </footer>
 
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
