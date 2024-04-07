@@ -49,6 +49,14 @@ def loadData():
 
     except FileNotFoundError:
         print("File not found.")
+    
+    try:
+        with open('data/cache/request.csv', 'w') as file:
+            file.write("")
+
+    except FileNotFoundError:
+        print("File not found.")
+
     return requests
 
 def start_analysis(data):
