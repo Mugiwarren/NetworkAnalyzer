@@ -151,7 +151,7 @@ def analysis(port, values, NUMBER_OF_PACKETS, config, percentPacketsAllowed):
                     create_log_file("WARNING", "PORT " + str(port), "The size of packet received on port is anormally big.")
                 
                 #
-                # TODO-2 : WARNING SUR LE NOMBRE DE REQUETES
+                # WARNING SUR LE NOMBRE DE REQUETES
                 #
 
                 # Check if the value is abnormal
