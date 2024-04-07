@@ -32,7 +32,7 @@ def main():
                 start_index = 0
             data[key] = data[key][start_index:]
 
-        with open('data/cache/request.csv', 'w') as file:
+        with open('web/data/cache/request.csv', 'w') as file:
             file.write("")
 
         start_analysis(data)
@@ -40,7 +40,7 @@ def main():
 def loadData():
     requests = []
     try:
-        with open('data/cache/request.csv', 'r') as file:
+        with open('web/data/cache/request.csv', 'r') as file:
             for l in file:
                 l = l.replace('\n', '')
                 l_splitted = l.split(';')
@@ -71,9 +71,9 @@ def analysis(port, values):
     return
 
 def savePortValue(port, amountOfRequests, SizeOfRequests):
-    if os.path.exists("data/ports/") == False:
-        os.makedirs("data/ports/")
-    file_name = "data/ports/history_" + str(port) + ".csv"
+    if os.path.exists("web/data/ports/") == False:
+        os.makedirs("web/data/ports/")
+    file_name = "web/data/ports/history_" + str(port) + ".csv"
     if os.path.exists(file_name) == False:
         with open(file_name, 'w') as file:
             file.write("")

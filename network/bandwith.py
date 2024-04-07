@@ -6,14 +6,14 @@ def get_bytes(t, iface='wlp0s20f3'):
         data = f.read()
         return int(data)
 
-def saveDataFromList(array, filename='data/bandwith.txt'):
+def saveDataFromList(array, filename='web/data/bandwith.txt'):
     with open(filename, 'w') as file:
         file.write('\n'.join(map(str, array)))
 
 def readPreviousBandwith():
     values = []
     try:
-        with open('data/bandwith.txt', 'r') as file:
+        with open('web/data/bandwith.txt', 'r') as file:
             for line in file:
                 value = float(line.strip())  # Convert each line to an integer
                 values.append(value)

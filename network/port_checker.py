@@ -6,7 +6,7 @@ def saveOpenPorts():
     save_open_ports_to_file(open_ports)
     print("Open ports:", open_ports)
 
-def save_open_ports_to_file(open_ports, filename='data/ports.txt'):
+def save_open_ports_to_file(open_ports, filename='web/data/ports.txt'):
     with open(filename, 'w') as file:
         file.write('\n'.join(map(str, open_ports)))
 
