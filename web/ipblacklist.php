@@ -123,7 +123,7 @@
                 exit;
             }
         }
-        $file = '../data/blacklistedips.txt';
+        $file = 'data/blacklistedips.txt';
         $ips = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         // Traiter la suppression d'IP
     if (isset($_POST['delete_ip'])) {

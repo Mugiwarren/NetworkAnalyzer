@@ -106,10 +106,13 @@
                             }
 
                             const now = new Date();
+                            console.log("now" + now);
                             const oneHourAgo = new Date(now.getTime() - 3600000); // Il y a une heure
-                            const diffMinutes = oneHourAgo.getTime() / 60000 + value / 4;
-                            const chartDate = new Date(diffMinutes * 60000);
-
+                            console.log("oneHourAgo" + oneHourAgo);
+                            const diffMinutes = (now.getTime() - oneHourAgo.getTime()) / 60000 + value / 4 - 440;
+                            console.log("diffminutes" + diffMinutes);
+                            const chartDate = new Date(oneHourAgo.getTime() + diffMinutes * 60000);
+                            console.log("chartDate" + chartDate);
                             const minutes = chartDate.getMinutes();
                             const hours = chartDate.getHours();
 
