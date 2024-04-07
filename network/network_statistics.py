@@ -1,8 +1,22 @@
+import json
+import statistics
 import time as t
 import os
 
+from packets_listener import create_log_file
+
 def main():
     data = {}
+
+    config = {
+        "request_before_warnings": 1000,
+    }
+    with open('network/config.json', 'r') as json_file:
+        config = json.load(json_file)
+    
+    print("Loaded config for DDOS detection: " + str(config) + " \n")
+
+    NUMBER_OF_PACKETS = 0
     while True:
         t.sleep(15)
         hashMap = {}
@@ -14,6 +28,7 @@ def main():
                 hashMap[port] = [0, 0]
             hashMap[port][0] = hashMap[port][0] + 1
             hashMap[port][1] = hashMap[port][1] + size
+            NUMBER_OF_PACKETS += 1
 
         for key in hashMap:
             if hashMap[key][0] > 0:
@@ -35,7 +50,7 @@ def main():
         with open('web/data/cache/request.csv', 'w') as file:
             file.write("")
 
-        start_analysis(data)
+        start_analysis(data, NUMBER_OF_PACKETS, config)
 
 def loadData():
     requests = []
@@ -51,7 +66,7 @@ def loadData():
         print("File not found.")
     
     try:
-        with open('data/cache/request.csv', 'w') as file:
+        with open('web/data/cache/request.csv', 'w') as file:
             file.write("")
 
     except FileNotFoundError:
@@ -59,24 +74,141 @@ def loadData():
 
     return requests
 
-def start_analysis(data):
+def start_analysis(data, NUMBER_OF_PACKETS, config):
+
+    port_size = {}
+    coef_value = 0
     for key in data:
-        analysis(key, data[key])
+        v = 1
+        if key in config['most_used_ports']:
+            v = 6
+        elif key in config['important_ports']:
+            v = 3
+        coef_value += v
+        port_size[key] = v
+
+    for key in data:
+        analysis(key, data[key], NUMBER_OF_PACKETS, config, port_size[key]/coef_value)
     return
 
-def analysis(port, values):
+def analysis(port, values, NUMBER_OF_PACKETS, config, percentPacketsAllowed):
 
     print("ANALYSE DU PORT " + str(port) + " EN COURS !!!")
 
     data = [values[len(values)-1-i] for i in range(len(values))]
+
+    precedent_values = []
+    for i in range(len(data)):
+        amount, size = data[i]
+        precedent_values.append(values)
+
     if len(data) > 0:
         l_a, l_s = data[0]
         savePortValue(port, l_a, l_s)
 
-        percentOfInvalidPackets = 0
+        detection_number = config['request_before_warnings']
+
+        if NUMBER_OF_PACKETS > detection_number:
+
+            percent = l_a / NUMBER_OF_PACKETS
+
+            # We're checking if it is greater than the threshold
+            if percent > percentPacketsAllowed:
+
+                # Let's load data from the file
+                n = 0
+                size_of_packets = 0
+
+                try:
+                    with open('web/data/ports/history' + str(port) + '.csv', 'r') as files:
+                        for line in files:
+                            splitted = line.split()
+                            if len(splitted) == 2:
+                                try:
+                                    size = int(splitted[1])
+                                    size_of_packets += size
+                                    n += 1
+                                except ValueError:
+                                    print('Skipping value: ' + str(line) + ' while reading !')
+                except FileNotFoundError:
+                    print("File not found.")
+                
+                if n > 0:
+                    size_of_packets = size_of_packets / n
+
+                #
+                # WARNING SUR LA TAILLE DES PACKETS TRANSMIS
+                #
+
+                # We're according 50% of error for the size of the packet
+                step = size_of_packets / 2
+                less_value = size_of_packets - step
+                great_value = size_of_packets + step
+
+                if l_s < less_value:
+                    create_log_file("WARNING", "PORT " + str(port), "The size of packet received on port is anormally small.")
+                elif l_s > great_value:
+                    create_log_file("WARNING", "PORT " + str(port), "The size of packet received on port is anormally big.")
+                
+                #
+                # TODO-2 : WARNING SUR LE NOMBRE DE REQUETES
+                #
+
+                # Check if the value is abnormal
+                if is_outlier(precedent_values, l_a):
+                    # checking if error is near predicted value with 20% of error
+                    if is_predictable(precedent_values, 0.2) == False:
+                        create_log_file("WARNING", "PORT " + str(port), "Receiving unexpected huge amount of request on port " + str(port))
+
         
 
     return
+
+def is_predictable(data, recent_value, max_relative_error):
+    # Calculate the linear trend based on previous data points
+    n = len(data)
+    
+    if n < 2:
+        return False  # Need at least two data points to estimate a trend
+    
+    # Calculate the differences (variations) between consecutive data points
+    differences = [data[i] - data[i - 1] for i in range(1, n)]
+    
+    # Calculate the mean difference (approximating the linear trend)
+    mean_difference = sum(differences) / (n - 1)
+    
+    # Predict the next value by extrapolating the linear trend
+    predicted_next_value = data[-1] + mean_difference
+    
+    # Calculate the absolute and relative errors between the recent value and the predicted next value
+    absolute_error = abs(recent_value - predicted_next_value)
+    relative_error = absolute_error / predicted_next_value
+
+    # Print the relative error and absolute error for debugging purposes
+    print(f"Relative Error: {relative_error}, Absolute Error: {absolute_error}")
+    
+    # Check if the relative error is within the specified threshold to consider the recent value predictable
+    if relative_error <= max_relative_error:
+        return True
+    else:
+        return False
+
+def is_outlier(data, value):
+    # Calculate the mean and standard deviation of the data
+    mean_value = statistics.mean(data)
+    std_dev = statistics.stdev(data)
+    
+    # Calculate the z-score for the given value
+    z_score = (value - mean_value) / std_dev
+    
+    # Define a threshold for determining if the value is an outlier
+    outlier_threshold = 2  # Typical threshold for z-score
+    
+    # Check if the absolute z-score exceeds the outlier threshold
+    if z_score > outlier_threshold:
+        return True
+    else:
+        return False
 
 def savePortValue(port, amountOfRequests, SizeOfRequests):
     if os.path.exists("web/data/ports/") == False:

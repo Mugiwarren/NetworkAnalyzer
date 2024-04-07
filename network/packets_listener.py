@@ -88,7 +88,7 @@ def listen():                                                                   
         if eth_proto == 8:
             (_, _, _, proto, src, target, data) = ipv4_packet(data)
 
-            packet = ["UNDEFINED", "USER_IP", "PROTOCOL", "PORT", "DATA"]
+            packet = ["UNDEFINED", "USER_IP", "PROTOCOL", "PORT", "web/data"]
             # 0- RECEIVED/SENT
             # 1- IP ADDRESS
             # 2- TCP/UDP/OTHER
