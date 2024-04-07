@@ -1,7 +1,30 @@
 import statistics
+import subprocess
 from time import *
 
-def get_bytes(t, iface='wlp0s20f3'):
+def get_default_interface():
+    try:
+        # Exécute la commande ip route pour obtenir la route par défaut
+        result = subprocess.run(['ip', 'route', 'show', 'default'], capture_output=True, text=True, check=True)
+
+        # Analyse la sortie pour obtenir l'interface
+        output_lines = result.stdout.strip().split('\n')
+        if output_lines:
+            default_route_info = output_lines[0]
+            interface = default_route_info.split()[4]  # Obtient l'interface à partir de la sortie
+            return interface
+        else:
+            return None
+
+    except subprocess.CalledProcessError as e:
+        print(f"Erreur lors de l'exécution de la commande : {e}")
+        return None
+
+def get_bytes(t):
+    iface = "eth0"
+    default_iface = get_default_interface()
+    if default_iface != None:
+        iface = default_iface
     with open('/sys/class/net/' + iface + '/statistics/' + t + '_bytes', 'r') as f:
         data = f.read()
         return int(data)
