@@ -1,6 +1,6 @@
 from packets_listener import *
 from port_checker import *
-from bandwith import *
+from bandwidth import *
 import threading
 from network_statistics import *
 
