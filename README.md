@@ -1,3 +1,5 @@
+This software is only avaiable for linux machines.
+
 # Install:
 
 Use the command: ``sudo sh install.sh``
@@ -9,6 +11,10 @@ Use the command: ``sudo sh start.sh``
 # Stop
 
 Use the command: ``sudo sh stop.sh``
+
+# Restart
+
+Use the command: ``sudo sh restart.sh``
 
 # Credits
 
