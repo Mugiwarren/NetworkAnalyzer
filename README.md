@@ -10,6 +10,10 @@ Use the command: ``sudo sh start.sh``
 
 Use the command: ``sudo sh stop.sh``
 
+# Restart
+
+Use the command: ``sudo sh restart.sh``
+
 # Credits
 
 We used the packet sniffer of Mustafa-Serhat-Uslu as part of our project:
