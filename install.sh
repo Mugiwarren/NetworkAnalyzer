@@ -11,6 +11,7 @@ sudo apt install python3.8 -y
 sudo apt install pip -y
 sudo apt install nmap -y
 sudo apt install iproute2 -y
+sudo apt install screen -y
 
 pip install threading
 pip install statistics
