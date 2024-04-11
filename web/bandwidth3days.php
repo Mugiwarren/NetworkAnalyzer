@@ -50,53 +50,71 @@
     <script>
         const throughputData = [];
         const labels = [];
-        const avgPreviousLinesList = [];
-
+        const avgPreviousLinesListUp = [];
+        const avgPreviousLinesListDown = [];
         const xhr = new XMLHttpRequest();
-        xhr.open("GET", "bandwidth.txt", true);
+        const randomParam = '?t=' + new Date().getTime();
+        xhr.open("GET", "bandwidth.txt" + randomParam, true);
         xhr.onload = function () {
             if (this.status === 200) {
                 const lines = this.responseText.trim().split("\n");
-                const dataPoints = 480;
-                const averagePoints = 36;
+                const dataPoints = 240;
+                const averagePoints = 72;
+                
                 for (let i = 0; i < lines.length; i += averagePoints) {
-                    let sum = 0;
+                    let sumDown = 0;
+                    let sumUp = 0;
                     for (let j = i; j < i + averagePoints; j++) {
-                        sum += parseFloat(lines[j]);
+                        
+                        if (lines[j]) { // Vérifier si la ligne existe
+                            const values = lines[j].split(";").map(Number);
+                            sumDown += values[0];
+                            sumUp += values[1];
+                        }
+                        
                     }
-                    const avg = sum / averagePoints;
-                    avgPreviousLinesList.push(avg);
-                    // Pushing meaningful labels for the x-axis
+                    const avgDown = sumDown / averagePoints;
+                        const avgUp = sumUp / averagePoints;    
+                        avgPreviousLinesListDown.push(avgDown);
+                        avgPreviousLinesListUp.push(avgUp);
                 }
+                    
+                    // Pushing meaningful labels for the x-axis
                 // Filling the beginning with zeros if needed
-                for (let i = avgPreviousLinesList.length; i < dataPoints; i++) {
-                    avgPreviousLinesList.unshift(0);
+                for (let i = avgPreviousLinesListDown.length; i < dataPoints; i++) {
+                    avgPreviousLinesListDown.unshift(0);
+                    avgPreviousLinesListUp.unshift(0);
                 }
                 for (let k = 0; k < dataPoints; k++){
                     labels.push(k);
                 }
-
             }
-            createBandwidthChart(avgPreviousLinesList, labels);
+            createBandwidthChart(avgPreviousLinesListDown, avgPreviousLinesListUp, labels);
         };
         xhr.send();
 
-        function createBandwidthChart(data, labels) {
-            const ctx = document.getElementById("bandwidthChart").getContext("2d");
-            const chart = new Chart(ctx, {
-                type: "line",
-                data: {
-                    labels: labels,
-                    datasets: [
-                        {
-                            label: "Bandwidth (last 3 days)",
-                            data: data,
-                            borderColor: "#F5A857",
-                            fill: false,
-                        },
-                    ],
-                },
-                options: {
+        function createBandwidthChart(dataDown, dataUp, labels) {
+        const ctx = document.getElementById("bandwidthChart").getContext("2d");
+        const chart = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: "Bandwidth Down (last 3 days)",
+                        data: dataDown,
+                        borderColor: "#F5A857",
+                        fill: false,
+                    },
+                    {
+                        label: "Bandwidth Up (last 3 days)",
+                        data: dataUp,
+                        borderColor: "#3498DB",
+                        fill: false,
+                    },
+                ],
+            },
+            options: {
                     maintainAspectRatio: false,
                     title: {
                         display: true,
@@ -106,15 +124,14 @@
                         x: {
                             type: "linear",
                             position: "bottom",
-                            suggestedMax: 480,
+                            suggestedMax: 240,
                             ticks: {
                                 callback: function (value, index, values) {
                                     const now = new Date();
                                     const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000); // 1 day ago
                                     const twoDaysAgo = new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000); // 2 days ago
                                     const threeDaysAgo = new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000); // 3 days ago
-                                    
-                                    const ticksCount = data.length;
+                                    const ticksCount = dataDown.length;
                                     const tickIndex = Math.round(index * (ticksCount - 1) / (values.length - 1));
                                     if (tickIndex === 0) {
                                         return threeDaysAgo.toLocaleDateString();

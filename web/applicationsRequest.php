@@ -59,6 +59,7 @@
         <div class="form-group text-center">
         <label for="portsSelect">Select a Port:</label>
         <select class="form-control" id="portsSelect">
+        <option value="" disabled>Select one--</option>
         </select>
     </div>
 

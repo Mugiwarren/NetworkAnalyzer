@@ -18,7 +18,8 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
-        width:80%;
+        width:70%;
+        height:80%;
         }
         .header, .footer {
         background-color: #F5A857;
@@ -48,44 +49,61 @@
         <canvas id="bandwidthChart"></canvas>
     </div>
     <script>
-        const throughputData = [];
-        const labels = [];
-        const lastHourDataPoints = 240;
+    const throughputDataDown = [];
+    const throughputDataUp = [];
+    const labels = [];
+    const lastHourDataPoints = 240;
 
-        const xhr = new XMLHttpRequest();
-        xhr.open("GET", "bandwidth.txt", true);
-        xhr.onload = function () {
-        if (this.status === 200) {
-            const lines = this.responseText.trim().split("\n");
-            const startIndex = Math.max(lines.length - lastHourDataPoints, 0);
-            
-            for (let i = 0; i < lastHourDataPoints; i++) {
-            const value = parseFloat(lines[lines.length - i]);
-            throughputData.push(value);
-            labels.push(lastHourDataPoints - (i - startIndex));
+    const xhr = new XMLHttpRequest();
+    const randomParam = '?t=' + new Date().getTime();
+    xhr.open("GET", "bandwidth.txt" + randomParam, true);
+    xhr.onload = function () {
+    if (this.status === 200) {
+        const lines = this.responseText.trim().split("\n");
+        console.log("lines:", lines); // Affiche les lignes lues à partir du fichier bandwidth.txt
+        const startIndex = Math.max(lines.length - lastHourDataPoints, 0);
+        const dataPoints = 240;
+
+        for (let i = 0; i < lastHourDataPoints; i++) {
+            const line = lines[lines.length - i];
+            if (line) { // Vérifie si la ligne existe
+                const values = line.split(";").map(Number);
+                throughputDataDown.push(values[0]);
+                throughputDataUp.push(values[1]);
+                labels.push(lastHourDataPoints - (i - startIndex));
             }
-
-            
-            createBandwidthChart(throughputData, labels);
-            
         }
-        };
-        xhr.send();
+            
         
-        function createBandwidthChart(data, labels) {
+        console.log("throughputDataDown:", throughputDataDown); // Affiche les valeurs down stockées dans le tableau
+        console.log("throughputDataUp:", throughputDataUp); // Affiche les valeurs up stockées dans le tableau
+        console.log("labels:", labels); // Affiche les labels stockés dans le tableau
+
+        createBandwidthChart(throughputDataDown, throughputDataUp, labels);
+    }
+};
+    xhr.send();
+
+    function createBandwidthChart(dataDown, dataUp, labels) {
         const ctx = document.getElementById("bandwidthChart").getContext("2d");
         const chart = new Chart(ctx, {
             type: "line",
             data: {
-            labels: labels,
-            datasets: [
-                {
-                label: "Bandwidth (last hour)",
-                data: data,
-                borderColor: "#F5A857",
-                fill: false,
-                },
-            ],
+                labels: labels,
+                datasets: [
+                    {
+                        label: "Bandwidth Down (last hour)",
+                        data: dataDown,
+                        borderColor: "#F5A857",
+                        fill: false,
+                    },
+                    {
+                        label: "Bandwidth Up (last hour)",
+                        data: dataUp,
+                        borderColor: "#3498DB",
+                        fill: false,
+                    },
+                ],
             },
             options: {
             maintainAspectRatio: false,
@@ -99,25 +117,13 @@
                     position: "bottom",
                     suggestedMax: lastHourDataPoints,
                     ticks: {
-                        stepSize: 40, // 10 minutes en points (4 points par minute * 10 minutes)
                         callback: function (value, index, values) {
-                            if (value === 0 || value % 40 !== 0) {
-                            return "";
+                            if (index === values.length - 1) {
+                                var now = new Date();
+                                var heure = now.getHours();
+                                var minute = now.getMinutes();
+                                return heure + ":" + minute.toString().padStart(2, "0");
                             }
-
-                            const now = new Date();
-                            console.log("now" + now);
-                            const oneHourAgo = new Date(now.getTime() - 3600000); // Il y a une heure
-                            console.log("oneHourAgo" + oneHourAgo);
-                            const diffMinutes = (now.getTime() - oneHourAgo.getTime()) / 60000 + value / 4 - 440;
-                            console.log("diffminutes" + diffMinutes);
-                            const chartDate = new Date(oneHourAgo.getTime() + diffMinutes * 60000);
-                            console.log("chartDate" + chartDate);
-                            const minutes = chartDate.getMinutes();
-                            const hours = chartDate.getHours();
-
-                            return `${hours}:${minutes.toString().padStart(2, "0")}`;
-                                
                         },
                     },
                     grid: {
