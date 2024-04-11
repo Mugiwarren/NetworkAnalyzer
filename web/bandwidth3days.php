@@ -48,6 +48,7 @@
         <canvas id="bandwidthChart"></canvas>
     </div>
     <script>
+        // Arrays to store throughput data and labels
         const throughputData = [];
         const labels = [];
         const avgPreviousLinesListUp = [];
@@ -60,13 +61,13 @@
                 const lines = this.responseText.trim().split("\n");
                 const dataPoints = 240;
                 const averagePoints = 72;
-                
+                // Process fetched data and calculate averages
                 for (let i = 0; i < lines.length; i += averagePoints) {
                     let sumDown = 0;
                     let sumUp = 0;
                     for (let j = i; j < i + averagePoints; j++) {
-                        
-                        if (lines[j]) { // Vérifier si la ligne existe
+                        // Calculate averages for up and down throughput
+                        if (lines[j]) { 
                             const values = lines[j].split(";").map(Number);
                             sumDown += values[0];
                             sumUp += values[1];
@@ -79,8 +80,8 @@
                         avgPreviousLinesListUp.push(avgUp);
                 }
                     
-                    // Pushing meaningful labels for the x-axis
-                // Filling the beginning with zeros if needed
+                    
+                // Prepare labels and fill arrays with zeros if needed
                 for (let i = avgPreviousLinesListDown.length; i < dataPoints; i++) {
                     avgPreviousLinesListDown.unshift(0);
                     avgPreviousLinesListUp.unshift(0);
@@ -92,7 +93,7 @@
             createBandwidthChart(avgPreviousLinesListDown, avgPreviousLinesListUp, labels);
         };
         xhr.send();
-
+        // Create chart using Chart.js
         function createBandwidthChart(dataDown, dataUp, labels) {
         const ctx = document.getElementById("bandwidthChart").getContext("2d");
         const chart = new Chart(ctx, {
@@ -153,7 +154,6 @@
                         },
                         y: {
                             suggestedMin: 0,
-                            suggestedMax: 20000,
                             title: {
                                 display: true,
                                 text: "Throughput (Kbps)",

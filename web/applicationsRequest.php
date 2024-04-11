@@ -1,238 +1,275 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>applicationsRequest</title>
-  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    body {
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      margin: 0;
-    }
-    .header, .footer {
-      background-color: #F5A857;
-      color: white;
-      padding: 10px 0;
-      text-align: center;
-    }
-    .footer {
-      margin-top: auto; /* Pushes the footer to the bottom */
-    }
-    .header a {
-        color: #ffffff;
-        text-decoration: none;
-    }
-    .form-group{
-        width:15%;
-        justify-content:center;
-        text-align:center;
-        margin-left:41%;
-        padding-top: 15px;
-    }
-    .graph-container {
-        display: flex;
-        justify-content: center;
-        margin-top: 50px; /* Ajustez la marge supérieure selon vos besoins */
-    }
-    canvas {
-        margin: 0 auto;
-        max-width: 600px;
-        margin-top: 10px; /* Ajustez la marge supérieure du canvas selon vos besoins */
-    }
-    .no-data-message {
-        text-align: center;
-        font-size: 20px;
-        margin-top: 25px;
-    }
-  </style>
+    <title>IP Blacklist</title>
+    <!-- Including Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <!-- Cache control meta tags -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <!-- Styling -->
+    <style>
+        /* Styling for body */
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa; /* Adding background color */
+        }
+        /* Styling for content wrapper */
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        /* Styling for form */
+        form {
+            width: 100%;
+            max-width: 400px; /* Reducing form width */
+            margin-bottom: 20px; /* Adding bottom space */
+        }
+        /* Styling for input elements */
+        input[type="text"],
+        input[type="submit"],
+        input[type="reset"] {
+            width: 100%;
+            padding: 10px; /* Adjusting padding for better user experience */
+            margin-bottom: 10px; /* Adding space between form elements */
+            border: 1px solid #ced4da; /* Adding border */
+            border-radius: 4px; /* Adding some border radius */
+        }
+        /* Styling for submit and reset buttons */
+        input[type="submit"],
+        input[type="reset"] {
+            background-color: #007bff; /* Changing background color of buttons */
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s; /* Adding smooth transition */
+        }
+        /* Hover styling for submit and reset buttons */
+        input[type="submit"]:hover,
+        input[type="reset"]:hover {
+            background-color: #0056b3; /* Changing background color on hover */
+        }
+        /* Styling for table */
+        .table {
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 20px;
+            overflow-y: auto;
+            border-collapse: collapse; /* Merging table borders */
+        }
+        /* Styling for table headers and cells */
+        th,
+        td {
+            padding: 8px; /* Adjusting cell padding */
+            border: 1px solid #ddd; /* Adding borders to cells */
+            text-align: center;
+        }
+        /* Styling for header and footer */
+        .header,
+        .footer {
+            background-color: #F5A857;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+            width: 100%;
+        }
+        /* Styling for header links */
+        .header a {
+            color: white;
+            text-decoration: none;
+        }
+        /* Hover styling for header links */
+        .header a:hover {
+            text-decoration: underline;
+        }
+        /* Styling for footer */
+        .footer {
+            margin-top: auto; /* Pushing footer to bottom */
+        }
+    </style>
 </head>
 <body>
+    <!-- Header -->
     <div class="header">
-        <a href="index.php"><h1>Network Analyzer</a>
+        <a href="index.php"><h1>Network Analyzer</h1></a>
     </div>
-    <div id = "errorMessage"></div>
-    <div class="container-fluid">
-        <div class="form-group text-center">
-        <label for="portsSelect">Select a Port:</label>
-        <select class="form-control" id="portsSelect">
-        <option value="" disabled>Select one--</option>
-        </select>
-    </div>
+    <div class="content-wrapper">
+        <?php
+        // PHP code for handling IP blacklist
+        function redirect($url) {
+            if (!headers_sent()) {
+                header('Location: ' . $url);
+                exit;
+            } else {
+                echo '<script type="text/javascript">';
+                echo 'window.location.href = "' . $url . '";';
+                echo '</script>';
+                echo '<noscript>';
+                echo '<meta http-equiv="refresh" content="0;url=' . $url . '" />';
+                echo '</noscript>';
+                exit;
+            }
+        }
+        // Reading blacklisted IPs from file
+        $file = 'data/blacklistedips.txt';
+        $ips = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
-        <div id="portData" class="graph-container">
-            <!-- Graphs for the selected port will be displayed here -->
-        </div>
+        if (isset($_POST['delete_ip'])) {
+            // Deleting an IP
+            $delete_ip = $_POST['delete_ip'];
+            $file = 'data/blacklistedips.txt';
+            $lines = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            $new_lines = array();
+
+            foreach ($lines as $line) {
+                $line_parts = explode("#", $line);
+                if (count($line_parts) >= 1 && trim($line_parts[0]) != $delete_ip) {
+                    $new_lines[] = $line;
+                }
+            }
+
+            file_put_contents($file, implode(PHP_EOL, $new_lines));
+            redirect($_SERVER['PHP_SELF']);
+        }
+
+        if (isset($_POST['add_ip'])) {
+            // Adding an IP
+            $add_ip = $_POST['add_ip'];
+            $add_host = $_POST['add_host'];
+            $file = 'data/blacklistedips.txt';
+            $timestamp = date('Y-m-d H:i:s');
+
+            $fileContent = file_get_contents($file);
+            if (substr(trim($fileContent), -1) !== PHP_EOL) {
+                $fileContent .= PHP_EOL;
+                file_put_contents($file, $fileContent);
+            }
+
+            $new_line = "{$add_ip}    # {$timestamp}, {$add_host}\n" . PHP_EOL;
+            file_put_contents($file, $new_line, FILE_APPEND);
+            redirect($_SERVER['PHP_SELF']);
+        }
+
+        if (isset($_POST['reset_search'])) {
+            $search = '';
+            $filteredIps = $ips;
+        }
+        
+        function searchIP($ips, $search) {
+            // Searching for an IP
+            if (empty($search)) {
+                return $ips;
+            }
+            return array_filter($ips, function($ip) use ($search) {
+                $line_parts = explode("#", $ip);
+                if (count($line_parts) >= 2) {
+                    $ip_address = trim($line_parts[0]);
+                    $host_part = trim($line_parts[1]);
+                    $host_parts = explode(",", $host_part);
+                    if (count($host_parts) >= 2) {
+                        $host = trim($host_parts[1]);
+                        return strpos($ip_address, $search) !== false || strpos($host, $search) !== false;
+                    }
+                }
+                return false;
+            });
+        }
+        
+        $search = isset($_POST['search']) ? $_POST['search'] : '';
+        $filteredIps = searchIP($ips, $search);
+        ?>
+        <!-- Search Bar -->
+        <form action="" method="post">
+            <input type="text" id="searchInput" name="search" placeholder="Search IP or Host" value="<?php echo htmlspecialchars($search); ?>">
+        </form>
+        <!-- Table to print the ip addresses and hostnames -->
+        <table id="ipTable" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>IP Address</th>
+                    <th>Host</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                foreach ($filteredIps as $ip) {
+                    $line_parts = explode("#", $ip);
+                    if (count($line_parts) >= 2) {
+                        $ip_address = trim($line_parts[0]);
+                        $host_part = trim($line_parts[1]);
+                        $host_parts = explode(",", $host_part);
+                        if (count($host_parts) >= 2) {
+                            $host = trim($host_parts[1]);
+                            ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($ip_address); ?></td>
+                                <td><?php echo htmlspecialchars($host); ?></td>
+                            </tr>
+                            <?php
+                        }
+                    }
+                }
+                ?>
+            </tbody>
+        </table>
+        <!-- Form to delete an IP -->
+        <form action="" method="post" class="form-inline mb-3">
+            <div class="input-group mr-sm-2">
+                <input type="text" name="delete_ip" class="form-control" placeholder="Delete IP">
+            </div>
+            <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+
+        <!-- Form to add an IP -->
+        <form action="" method="post" class="mb-3">
+            <div class="form-row align-items-center">
+                <div class="col-auto">
+                    <input type="text" name="add_ip" class="form-control mb-2" placeholder="Add IP">
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary mb-2">Add</button>
+                </div>
+                <div class="col-auto">
+                    <input type="text" name="add_host" class="form-control mb-2" placeholder="Add host name">
+                </div>
+                
+            </div>
+        </form>
     </div>
+    <!-- Footer -->
     <footer class="footer">
         <p>Reykjavik University - Spring 2024</p>
     </footer>
+    <!-- JavaScript for searching IPs -->
+    <script>
+    document.getElementById('searchInput').addEventListener('input', searchIP);
+    document.getElementById('searchButton').addEventListener('click', searchIP);
 
-  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    function searchIP() {
+        const searchTerm = document.getElementById('searchInput').value.trim();
+        const tableRows = document.querySelectorAll('#ipTable tbody tr');
 
-  <script>
-    // Load ports data and populate select options
-    $(document).ready(function() {
-        $.get("data/ports.txt", function(data) {
-            const ports = data.trim().split("\n");
-            const portsSelect = document.getElementById("portsSelect");
+        for (const row of tableRows) {
+            const ipAddress = row.cells[0].textContent.trim();
+            const hostName = row.cells[1].textContent.trim();
 
-            ports.forEach(function(port) {
-                const option = document.createElement("option");
-                option.text = port;
-                portsSelect.add(option);
-            });
-        });
-    });
-
-    // Function to handle port selection
-    document.getElementById("portsSelect").addEventListener("change", function() {
-        const selectedPort = this.value;
-
-        // Clear the previous graphs
-        document.getElementById("portData").innerHTML = "";
-
-        // Load data for the selected port and create graphs
-        loadData(selectedPort);
-    });
-
-    // Function to load and display data for the selected port
-    function loadData(selectedPort) {
-    $.ajax({
-        url: "data/ports/history_" + selectedPort + ".csv",
-        type: 'HEAD',
-        error: function () {
-            // File does not exist, create graphs with zero values
-            //document.getElementById("errorMessage").innerHTML = '<div class="no-data-message">No data available</div>';
-            createGraphs(Array(10).fill(0), Array(10).fill(0), 0);
-        },
-        success: function () {
-            // File exists, load and display data for the selected port
-            //document.getElementById("errorMessage").innerHTML = '<div class="no-data-message"></div>';
-            $.get("data/ports/history_" + selectedPort + ".csv", function(data) {
-                // Split the CSV data into lines
-                const lines = data.trim().split("\n");
-
-                // Extract the first values from each line to create data for the first graph
-                const firstValues = lines.map(function(line) {
-                    return parseFloat(line.split(";")[0]);
-                });
-
-                // Calculate the average of the second column
-                const secondColumnValues = lines.map(function(line) {
-                    return parseFloat(line.split(";")[1]);
-                });
-                const averageSecondColumn = secondColumnValues.reduce((acc, val) => acc + val, 0) / secondColumnValues.length;
-
-                createGraphs(firstValues, secondColumnValues, averageSecondColumn);
-            });
+            if (ipAddress.includes(searchTerm) || hostName.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
         }
-    });
-}
-
-    // Function to create graphs
-    function createGraphs(firstValues, secondColumnValues, averageSecondColumn) {
-        // Create a canvas element for the first graph
-        const canvas1 = document.createElement("canvas");
-        canvas1.width = 800; // Largeur ajustée
-        canvas1.height = 600; // Hauteur ajustée
-        document.getElementById("portData").appendChild(canvas1);
-
-        // Create the first graph using Chart.js
-        new Chart(canvas1.getContext("2d"), {
-            type: "line",
-            data: {
-                labels: Array.from({ length: firstValues.length }, (_, i) => i + 1),
-                datasets: [{
-                    label: "Number of requests received",
-                    data: firstValues,
-                    borderColor: "blue",
-                    fill: false
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        title: {
-                            display: true,
-                            text: "Number of requests"
-                        }
-                    },
-                    x: {
-                        title: {
-                            display: true,
-                            text: "Time (minutes ago)"
-                        },
-                        ticks: {
-                            callback: function(value, index, values) {
-                                const lastIndex = values.length - 1;
-                                const distance = lastIndex - index;
-                                if (distance % 4 === 0) {
-                                    const minutes = Math.ceil(distance / 4);
-                                    return `${minutes}min`;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        });
-
-        // Create a canvas element for the second graph
-        const canvas2 = document.createElement("canvas");
-        canvas2.width = 800; // Largeur ajustée
-        canvas2.height = 600; // Hauteur ajustée
-        document.getElementById("portData").appendChild(canvas2);
-
-        // Create the second graph using Chart.js
-        new Chart(canvas2.getContext("2d"), {
-            type: "bar",
-            data: {
-                labels: Array.from({ length: secondColumnValues.length }, (_, i) => i + 1),
-                datasets: [{
-                    label: "Packet size",
-                    data: secondColumnValues,
-                    backgroundColor: "green",
-                    borderColor: "green",
-                    borderWidth: 1
-                }, {
-                    type: "line",
-                    label: "Average Packet Size",
-                    data: Array(secondColumnValues.length).fill(averageSecondColumn),
-                    borderColor: "red",
-                    borderWidth: 2,
-                    fill: false,
-                    pointRadius: 0, // Supprimer les points de la ligne rouge
-                    pointHoverRadius: 0 
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        title: {
-                            display: true,
-                            text: "Packet size"
-                        }
-                    },
-                    x: {
-                        title: {
-                            display: true,
-                        }
-                    }
-                }
-            }
-        });
     }
-  </script>
+    </script>
 </body>
 </html>

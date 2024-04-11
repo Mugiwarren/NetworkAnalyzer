@@ -49,6 +49,7 @@
         <canvas id="bandwidthChart"></canvas>
     </div>
     <script>
+    // Arrays to store throughput data and labels
     const throughputDataDown = [];
     const throughputDataUp = [];
     const labels = [];
@@ -60,13 +61,13 @@
     xhr.onload = function () {
     if (this.status === 200) {
         const lines = this.responseText.trim().split("\n");
-        console.log("lines:", lines); // Affiche les lignes lues à partir du fichier bandwidth.txt
+        console.log("lines:", lines); 
         const startIndex = Math.max(lines.length - lastHourDataPoints, 0);
         const dataPoints = 240;
-
+        // processes data
         for (let i = 0; i < lastHourDataPoints; i++) {
             const line = lines[lines.length - i];
-            if (line) { // Vérifie si la ligne existe
+            if (line) { 
                 const values = line.split(";").map(Number);
                 throughputDataDown.push(values[0]);
                 throughputDataUp.push(values[1]);
@@ -75,15 +76,15 @@
         }
             
         
-        console.log("throughputDataDown:", throughputDataDown); // Affiche les valeurs down stockées dans le tableau
-        console.log("throughputDataUp:", throughputDataUp); // Affiche les valeurs up stockées dans le tableau
-        console.log("labels:", labels); // Affiche les labels stockés dans le tableau
+        console.log("throughputDataDown:", throughputDataDown); 
+        console.log("throughputDataUp:", throughputDataUp); 
+        console.log("labels:", labels);
 
         createBandwidthChart(throughputDataDown, throughputDataUp, labels);
     }
 };
     xhr.send();
-
+    //Creates a chart
     function createBandwidthChart(dataDown, dataUp, labels) {
         const ctx = document.getElementById("bandwidthChart").getContext("2d");
         const chart = new Chart(ctx, {
@@ -132,7 +133,6 @@
                 },
                 y: {
                 suggestedMin: 0,
-                suggestedMax: 10000,
                 title: {
                     display: true,
                     text: "Throughput (Kbps)",

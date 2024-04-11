@@ -111,7 +111,6 @@
         }
         $file = 'data/blacklistedips.txt';
         $ips = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        // Traiter la suppression d'IP
     if (isset($_POST['delete_ip'])) {
         $delete_ip = $_POST['delete_ip'];
         $file = 'data/blacklistedips.txt';
@@ -128,14 +127,13 @@
         file_put_contents($file, implode(PHP_EOL, $new_lines));
         redirect($_SERVER['PHP_SELF']);
     }
-        // Traiter l'ajout d'IP
+
     if (isset($_POST['add_ip'])) {
         $add_ip = $_POST['add_ip'];
         $add_host = $_POST['add_host'];
         $file = 'data/blacklistedips.txt';
         $timestamp = date('Y-m-d H:i:s');
 
-        // Vérifier si le fichier se termine par un saut de ligne
         $fileContent = file_get_contents($file);
         if (substr(trim($fileContent), -1) !== PHP_EOL) {
             $fileContent .= PHP_EOL;
@@ -147,12 +145,11 @@
         redirect($_SERVER['PHP_SELF']);
     }
 
-        // Réinitialiser la recherche si le bouton de réinitialisation est cliqué
         if (isset($_POST['reset_search'])) {
             $search = '';
             $filteredIps = $ips;
         }
-        // Fonction de recherche d'IP
+        
         function searchIP($ips, $search) {
             if (empty($search)) {
                 return $ips;
@@ -171,15 +168,15 @@
                 return false;
             });
         }
-        // Rechercher une IP si le formulaire de recherche est soumis
+        
         $search = isset($_POST['search']) ? $_POST['search'] : '';
         $filteredIps = searchIP($ips, $search);
         ?>
-        <!-- Barre de recherche -->
+        <!-- Search Bar -->
         <form action="" method="post">
             <input type="text" id="searchInput" name="search" placeholder="Search IP or Host" value="<?php echo htmlspecialchars($search); ?>">
         </form>
-        <!-- Tableau pour afficher les adresses IP -->
+        <!-- Table to print the ip adresses and hostnames -->
         <table id="ipTable" class="table table-striped">
             <thead>
                 <tr>
@@ -209,7 +206,7 @@
                 ?>
             </tbody>
         </table>
-        <!-- Formulaire pour supprimer une IP -->
+        <!-- Form to delete an IP -->
         <form action="" method="post" class="form-inline mb-3">
             <div class="input-group mr-sm-2">
                 <input type="text" name="delete_ip" class="form-control" placeholder="Delete IP">
@@ -217,7 +214,7 @@
             <button type="submit" class="btn btn-danger">Delete</button>
         </form>
 
-        <!-- Formulaire pour ajouter une IP -->
+        <!-- Form to add an IP -->
         <form action="" method="post" class="mb-3">
             <div class="form-row align-items-center">
                 <div class="col-auto">
