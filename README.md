@@ -1,3 +1,5 @@
+This software is only avaiable for linux machines.
+
 # Install:
 
 Use the command: ``sudo sh install.sh``
