@@ -142,6 +142,9 @@ def listen():                                                                   
 
                     continue
 
+                if packet[3] == 25000:
+                    printPacket(packet)
+
                 if packet[0] == "RECEIVED":
                     ports = read_open_ports_from_file()
                     port = packet[3]

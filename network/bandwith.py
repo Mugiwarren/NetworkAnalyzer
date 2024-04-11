@@ -38,7 +38,7 @@ def readPreviousBandwith():
     try:
         with open('web/data/bandwith.txt', 'r') as file:
             for line in file:
-                value = float(line.strip())  # Convert each line to an integer
+                value = line.strip()  # Convert each line to an integer
                 values.append(value)
     except FileNotFoundError:
         print("File not found.")
@@ -46,19 +46,19 @@ def readPreviousBandwith():
 
 def calcData():
     rx1 = get_bytes('rx')
-    values = []
-    for i in range(15):
-        sleep(1)
-        rx2 = get_bytes('rx')
-        rx_speed = round((rx2 - rx1)/1000.0, 4)
-        values.append(rx_speed)
-        rx1 = rx2
-    return statistics.mean(values)
+    tx1 = get_bytes('tx')
+    sleep(15)
+    rx2 = get_bytes('rx')
+    tx2 = get_bytes('tx')
+    rx_speed = round(((rx2 - rx1)/15)/1000.0, 4)
+    tx_speed = round(((tx2 - tx1)/15)/1000.0, 4)
+
+    return rx_speed, tx_speed
 
 def saveData():
     values = readPreviousBandwith()
-    data = calcData()
-    values.append(data)
+    dataR, dataT = calcData()
+    values.append(str(dataR) + ";" + str(dataT))
     start = len(values) - 3*24*60*60 - 1
     if start < 0:
         start = 0
