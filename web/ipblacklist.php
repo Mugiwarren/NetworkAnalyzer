@@ -2,20 +2,24 @@
 <html>
 <head>
     <title>IP Blacklist</title>
+    <!-- Including Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <!-- Cache control meta tags -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
+    <!-- Styling -->
     <style>
-         body {
+        /* Styling for body */
+        body {
             display: flex;
             flex-direction: column;
             min-height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
-            background-color: #f8f9fa; /* Ajout d'une couleur de fond */
+            background-color: #f8f9fa; /* Adding background color */
         }
-
+        /* Styling for content wrapper */
         .content-wrapper {
             flex: 1;
             display: flex;
@@ -25,76 +29,83 @@
             padding: 20px;
             box-sizing: border-box;
         }
-
+        /* Styling for form */
         form {
             width: 100%;
-            max-width: 400px; /* Réduit la largeur du formulaire */
-            margin-bottom: 20px; /* Ajout d'un espace en bas */
+            max-width: 400px; /* Reducing form width */
+            margin-bottom: 20px; /* Adding bottom space */
         }
-
-        input[type="text"], input[type="submit"], input[type="reset"] {
+        /* Styling for input elements */
+        input[type="text"],
+        input[type="submit"],
+        input[type="reset"] {
             width: 100%;
-            padding: 10px; /* Ajuste le rembourrage pour une meilleure expérience utilisateur */
-            margin-bottom: 10px; /* Ajout d'un espace entre les éléments du formulaire */
-            border: 1px solid #ced4da; /* Ajout d'une bordure */
-            border-radius: 4px; /* Ajout d'un peu de bordure */
+            padding: 10px; /* Adjusting padding for better user experience */
+            margin-bottom: 10px; /* Adding space between form elements */
+            border: 1px solid #ced4da; /* Adding border */
+            border-radius: 4px; /* Adding some border radius */
         }
-
-        input[type="submit"], input[type="reset"] {
-            background-color: #007bff; /* Change la couleur de fond des boutons */
+        /* Styling for submit and reset buttons */
+        input[type="submit"],
+        input[type="reset"] {
+            background-color: #007bff; /* Changing background color of buttons */
             border: none;
             color: white;
             cursor: pointer;
-            transition: background-color 0.3s; /* Ajoute une transition fluide */
+            transition: background-color 0.3s; /* Adding smooth transition */
         }
-
-        input[type="submit"]:hover, input[type="reset"]:hover {
-            background-color: #0056b3; /* Change la couleur de fond au survol */
+        /* Hover styling for submit and reset buttons */
+        input[type="submit"]:hover,
+        input[type="reset"]:hover {
+            background-color: #0056b3; /* Changing background color on hover */
         }
-
+        /* Styling for table */
         .table {
             width: 100%;
             max-width: 600px;
             margin-bottom: 20px;
             overflow-y: auto;
-            border-collapse: collapse; /* Fusionne les bordures de la table */
+            border-collapse: collapse; /* Merging table borders */
         }
-
-        th, td {
-            padding: 8px; /* Ajuste le rembourrage des cellules */
-            border: 1px solid #ddd; /* Ajoute des bordures aux cellules */
+        /* Styling for table headers and cells */
+        th,
+        td {
+            padding: 8px; /* Adjusting cell padding */
+            border: 1px solid #ddd; /* Adding borders to cells */
             text-align: center;
         }
-
-        .header, .footer {
+        /* Styling for header and footer */
+        .header,
+        .footer {
             background-color: #F5A857;
             color: white;
             padding: 10px 0;
             text-align: center;
             width: 100%;
         }
-
+        /* Styling for header links */
         .header a {
             color: white;
             text-decoration: none;
         }
-
+        /* Hover styling for header links */
         .header a:hover {
             text-decoration: underline;
         }
-
+        /* Styling for footer */
         .footer {
-            margin-top: auto; /* Pousse le pied de page en bas */
+            margin-top: auto; /* Pushing footer to bottom */
         }
-
-        </style>
+    </style>
 </head>
 <body>
+    <!-- Header -->
     <div class="header">
-        <a href="index.php"><h1>Network Analyzer</a>
+        <a href="index.php"><h1>Network Analyzer</h1></a>
     </div>
     <div class="content-wrapper">
         <?php
+        // PHP code for handling IP blacklist
         function redirect($url) {
             if (!headers_sent()) {
                 header('Location: ' . $url);
@@ -109,41 +120,45 @@
                 exit;
             }
         }
+        // Reading blacklisted IPs from file
         $file = 'data/blacklistedips.txt';
         $ips = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    if (isset($_POST['delete_ip'])) {
-        $delete_ip = $_POST['delete_ip'];
-        $file = 'data/blacklistedips.txt';
-        $lines = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        $new_lines = array();
 
-        foreach ($lines as $line) {
-            $line_parts = explode("#", $line);
-            if (count($line_parts) >= 1 && trim($line_parts[0]) != $delete_ip) {
-                $new_lines[] = $line;
+        if (isset($_POST['delete_ip'])) {
+            // Deleting an IP
+            $delete_ip = $_POST['delete_ip'];
+            $file = 'data/blacklistedips.txt';
+            $lines = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            $new_lines = array();
+
+            foreach ($lines as $line) {
+                $line_parts = explode("#", $line);
+                if (count($line_parts) >= 1 && trim($line_parts[0]) != $delete_ip) {
+                    $new_lines[] = $line;
+                }
             }
+
+            file_put_contents($file, implode(PHP_EOL, $new_lines));
+            redirect($_SERVER['PHP_SELF']);
         }
 
-        file_put_contents($file, implode(PHP_EOL, $new_lines));
-        redirect($_SERVER['PHP_SELF']);
-    }
+        if (isset($_POST['add_ip'])) {
+            // Adding an IP
+            $add_ip = $_POST['add_ip'];
+            $add_host = $_POST['add_host'];
+            $file = 'data/blacklistedips.txt';
+            $timestamp = date('Y-m-d H:i:s');
 
-    if (isset($_POST['add_ip'])) {
-        $add_ip = $_POST['add_ip'];
-        $add_host = $_POST['add_host'];
-        $file = 'data/blacklistedips.txt';
-        $timestamp = date('Y-m-d H:i:s');
+            $fileContent = file_get_contents($file);
+            if (substr(trim($fileContent), -1) !== PHP_EOL) {
+                $fileContent .= PHP_EOL;
+                file_put_contents($file, $fileContent);
+            }
 
-        $fileContent = file_get_contents($file);
-        if (substr(trim($fileContent), -1) !== PHP_EOL) {
-            $fileContent .= PHP_EOL;
-            file_put_contents($file, $fileContent);
+            $new_line = "{$add_ip}    # {$timestamp}, {$add_host}\n" . PHP_EOL;
+            file_put_contents($file, $new_line, FILE_APPEND);
+            redirect($_SERVER['PHP_SELF']);
         }
-
-        $new_line = "{$add_ip}    # {$timestamp}, {$add_host}\n" . PHP_EOL;
-        file_put_contents($file, $new_line, FILE_APPEND);
-        redirect($_SERVER['PHP_SELF']);
-    }
 
         if (isset($_POST['reset_search'])) {
             $search = '';
@@ -151,6 +166,7 @@
         }
         
         function searchIP($ips, $search) {
+            // Searching for an IP
             if (empty($search)) {
                 return $ips;
             }
@@ -176,7 +192,7 @@
         <form action="" method="post">
             <input type="text" id="searchInput" name="search" placeholder="Search IP or Host" value="<?php echo htmlspecialchars($search); ?>">
         </form>
-        <!-- Table to print the ip adresses and hostnames -->
+        <!-- Table to print the ip addresses and hostnames -->
         <table id="ipTable" class="table table-striped">
             <thead>
                 <tr>
@@ -230,9 +246,11 @@
             </div>
         </form>
     </div>
+    <!-- Footer -->
     <footer class="footer">
         <p>Reykjavik University - Spring 2024</p>
     </footer>
+    <!-- JavaScript for searching IPs -->
     <script>
     document.getElementById('searchInput').addEventListener('input', searchIP);
     document.getElementById('searchButton').addEventListener('click', searchIP);
