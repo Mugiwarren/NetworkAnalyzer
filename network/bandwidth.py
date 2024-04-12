@@ -4,14 +4,12 @@ from time import *
 
 def get_default_interface():
     try:
-        # Exécute la commande ip route pour obtenir la route par défaut
         result = subprocess.run(['ip', 'route', 'show', 'default'], capture_output=True, text=True, check=True)
 
-        # Analyse la sortie pour obtenir l'interface
         output_lines = result.stdout.strip().split('\n')
         if output_lines:
             default_route_info = output_lines[0]
-            interface = default_route_info.split()[4]  # Obtient l'interface à partir de la sortie
+            interface = default_route_info.split()[4]
             return interface
         else:
             return None
@@ -38,7 +36,7 @@ def readPreviousBandwith():
     try:
         with open('web/bandwidth.txt', 'r') as file:
             for line in file:
-                value = line.strip()  # Convert each line to an integer
+                value = line.strip() 
                 values.append(value)
     except FileNotFoundError:
         print("File not found.")

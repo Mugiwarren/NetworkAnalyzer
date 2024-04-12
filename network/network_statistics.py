@@ -93,7 +93,7 @@ def start_analysis(data, NUMBER_OF_PACKETS, config):
 
 def analysis(port, values, NUMBER_OF_PACKETS, config, percentPacketsAllowed):
 
-    print("----------------------------------\nStarting analyse of port: " + str(port))
+    print("----------------------------------\nStarting analysis of port: " + str(port))
 
     data = [values[len(values)-1-i] for i in range(len(values))]
 
@@ -103,7 +103,7 @@ def analysis(port, values, NUMBER_OF_PACKETS, config, percentPacketsAllowed):
         precedent_values.append(amount)
 
     if len(precedent_values) <= 1:
-        print("Impossible to do analysis because there is only one value !")
+        print("Impossible to do the analysis because there is only one value !")
 
     if len(data) > 0 and len(precedent_values) > 1:
         print("Values: " + str(len(data)))
@@ -182,7 +182,6 @@ def analysis(port, values, NUMBER_OF_PACKETS, config, percentPacketsAllowed):
     return
 
 def is_predictable(data, recent_value, max_relative_error):
-    # Calculate the linear trend based on previous data points
     n = len(data)
     print("")
     print("     Length of data:", len(data))
@@ -190,30 +189,24 @@ def is_predictable(data, recent_value, max_relative_error):
     if n < 2:
         return False  # Need at least two data points to estimate a trend
     
-    # Calculate the differences (variations) between consecutive data points
     differences = [data[i] - data[i - 1] for i in range(1, n)]
     
-    # Calculate the mean difference (approximating the linear trend)
     mean_difference = sum(differences) / (n - 1)
     print("     Mean difference: ", mean_difference)
     
-    # Predict the next value by extrapolating the linear trend
     predicted_next_value = data[-1] + mean_difference
     print("     Predicted next value: ", predicted_next_value)
-    # Calculate the absolute and relative errors between the recent value and the predicted next value
     absolute_error = abs(recent_value - predicted_next_value)
     relative_error = absolute_error / predicted_next_value
     print("     Absolute error:", absolute_error)
     print("     Relative error:", relative_error)
     
-    # Check if the relative error is within the specified threshold to consider the recent value predictable
     if relative_error <= max_relative_error:
         return True
     else:
         return False
 
 def is_outlier(data, value):
-    # Calculate the mean and standard deviation of the data
     print("")
 
     print("     Length of data:", len(data))
@@ -222,7 +215,6 @@ def is_outlier(data, value):
     std_dev = statistics.stdev(data)
     print("     Standart deviation:", std_dev)
     
-    # Calculate the z-score for the given value
     z_score = 9999999999
     if std_dev > 0:
         z_score = (value - mean_value) / std_dev
@@ -230,10 +222,8 @@ def is_outlier(data, value):
         z_score = 0
     
     print("     Z-score:", z_score)
-    # Define a threshold for determining if the value is an outlier
     outlier_threshold = 2  # Typical threshold for z-score
     
-    # Check if the absolute z-score exceeds the outlier threshold
     if z_score > outlier_threshold:
         return True
     else:
