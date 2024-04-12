@@ -59,7 +59,7 @@ def saveData():
     values = readPreviousBandwith()
     dataR, dataT = calcData()
     values.append(str(dataR) + ";" + str(dataT))
-    start = len(values) - 3*24*60*60 - 1
+    start = len(values) - 3*24*60*4 - 1
     if start < 0:
         start = 0
     values = values[start:]
