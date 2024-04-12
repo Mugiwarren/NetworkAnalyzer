@@ -162,7 +162,7 @@ def read_open_ports_from_file():
     try:
         with open('web/data/ports.txt', 'r') as file:
             for line in file:
-                port = int(line.strip())  # Convert each line to an integer
+                port = int(line.strip()) 
                 open_ports.append(port)
     except FileNotFoundError:
         print("File not found.")
