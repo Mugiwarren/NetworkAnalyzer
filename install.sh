@@ -12,6 +12,7 @@ sudo apt install pip -y
 sudo apt install nmap -y
 sudo apt install iproute2 -y
 sudo apt install screen -y
+sudo apt-get install php -y
 
 pip3 install -U threading
 pip3 install -U statistics
