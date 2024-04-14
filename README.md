@@ -20,6 +20,10 @@ Use the command: ``sudo sh stop.sh``
 
 Use the command: ``sudo sh restart.sh``
 
+# Access the application
+
+You can access the application by opening the following website: ``localhost:25000``
+
 # Credits
 
 We used the packet sniffer of Mustafa-Serhat-Uslu as part of our project:
