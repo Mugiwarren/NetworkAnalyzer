@@ -11,6 +11,7 @@ if screen -list | grep -q network_analyzer_python; then
 fi
 
 echo "Launching Python script in a new screen session: network_analyzer_python"
+echo "You can correct python version below this line"
 screen -S network_analyzer_python -d -m sudo python3.8 network/backend.py
 
 echo "Script execution initiated in screen session: network_analyzer_python"
