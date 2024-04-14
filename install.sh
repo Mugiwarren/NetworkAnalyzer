@@ -13,14 +13,14 @@ sudo apt install nmap -y
 sudo apt install iproute2 -y
 sudo apt install screen -y
 
-pip install threading
-pip install statistics
-pip install subprocess
-pip install os
-pip install socket
-pip install struct
-pip install textwrap
-pip install getmac
-pip install datetime
-pip install time
-pip install nmap
+pip3 install -U threading
+pip3 install -U statistics
+pip3 install -U subprocess
+pip3 install -U os
+pip3 install -U socket
+pip3 install -U struct
+pip3 install -U textwrap
+pip3 install -U getmac
+pip3 install -U datetime
+pip3 install -U time
+pip3 install -U python-nmap
