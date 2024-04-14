@@ -6,7 +6,7 @@ Use the command: ``sudo sh install.sh``
 
 # Before starting
 Go to the ``start.sh`` file and edit the python3.8 term by replacing it by your version of python, it mights be 3.8/3.9/3.10/3.11/3.12.
-Annotations has been added ("Correct python version here") in lines you need to do it.
+Annotations has been added ("You can correct python version below this line") in lines you need to do it.
 
 # Starting
 
